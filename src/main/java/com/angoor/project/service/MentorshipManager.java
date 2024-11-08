@@ -1,4 +1,4 @@
-package com.example.project.service;
+package com.angoor.project.service;
 
 //import appropriate repository classes 
 
