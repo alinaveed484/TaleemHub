@@ -1,0 +1,53 @@
+I am listing here things or codes or concepts that I have uncovered that I think everyone should be aware of.
+
+
+How do you interact with a Database?
+
+There are two ways:
+1- EntityManager => More difficult, Gives more fine-grained Control
+2- JPARepository => Simpler, Easier
+
+Example:
+ENTITY_MANAGER
+public List<Teacher> findTeachersBySubject(String subject) {
+    return entityManager.createQuery("SELECT t FROM Teacher t WHERE t.subjectSpecialization = :subject", Teacher.class)
+                        .setParameter("subject", subject)
+                        .getResultList();
+}
+
+JPAREPO
+You should use JpaRepository when you need basic CRUD operations (create, read, update, delete) and
+when you can work with the methods provided by the repository, like save(), findById(), and delete().
+
+To map a Many-Many Relationship:
+Both classes need to have a set inside them!
+
+Write the annotaion @Entity on top of the Model layer Class
+@ManyToMany(mappedBy = "teachers") => Inside one class
+
+Inside the Other Class
+@ManyToMany
+@JoinTable(
+    name = "Student_Teacher",
+    joinColumns = @JoinColumn(name = "studentId"),
+    inverseJoinColumns = @JoinColumn(name = "teacherId")
+)
+
+
+@Transactional should be used for operations that are making changes to an object in DB
+This will give us the functionality of rollback. We still need to call save() at the end of the Function
+
+No need to handle the Student and TeacherID as JPA will auto update the ID in both the DB and object by using the lines
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+@Entity
+@Table(name = "student") // Optional: if you want a custom table name
+The table name is derived either from the class name or from the @Table annotation (if provided)
+
+
+This is what hibernate Follows so make sure to name your tables like this
+Replace dots with underscores
+Change camel case to snake case, and
+Lower-case table names
+
+Or can you can explicitly specify everything in code
