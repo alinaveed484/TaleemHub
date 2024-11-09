@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.angoor.project.model.Log;
 import com.angoor.project.model.Message;
 
-@Repository
-public interface LogRepo extends JpaRepository<Log,Integer> {
+public interface LogRepo{
 
 }
