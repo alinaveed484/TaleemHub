@@ -36,6 +36,15 @@ public class Student{
     )
     private Set<Teacher> teachers = new HashSet<>();
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "Student_Teacher_Request",
+            joinColumns = @JoinColumn(name = "studentId"),
+            inverseJoinColumns = @JoinColumn(name = "teacherId")
+    )
+    private Set<Teacher> teacherRequests = new HashSet<>();
+    
     public Student(String firstName, String lastName, int gradeLevel, LocalDate enrollmentDate, String email, String phone, String profilePhotoURL) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -50,7 +59,7 @@ public class Student{
 
     }
 
-    public void setStudentId(int studentId) {
+    public void setStudentId(Integer studentId) {
         this.studentId = studentId;
     }
     public void setFirstName(String firstName) {
@@ -71,7 +80,7 @@ public class Student{
     public void setProfilePhotoURL(String profilePhotoURL) {
         this.profilePhotoURL = profilePhotoURL;
     }
-    public int getStudentId() {
+    public Integer getStudentId() {
         return studentId;
     }
     public String getFirstName() {
@@ -80,7 +89,7 @@ public class Student{
     public String getLastName() {
         return lastName;
     }
-    public int getGradeLevel() {
+    public Integer getGradeLevel() {
         return gradeLevel;
     }
     public LocalDate getEnrollmentDate() {
@@ -101,6 +110,11 @@ public class Student{
     public void setTeachers(Set<Teacher> teachers) {
         this.teachers = teachers;
     }
+    
+    public void addMentorRequest(Teacher t) {
+    	teacherRequests.add(t);
+    }
+
 
     public void setGradeLevel(int gradeLevel) {
         if (gradeLevel < 8 || gradeLevel > 16) {
