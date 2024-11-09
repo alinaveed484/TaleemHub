@@ -1,21 +1,11 @@
 package com.angoor.project.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import com.angoor.project.model.Wallet;
 
+@Repository
+public interface WalletRepo  extends JpaRepository<Wallet, Integer>{
 
-public class WalletRepo {
-	private static WalletRepo instance;
-	
-	
-	private WalletRepo() {
-		
-	}
-	
-    // Syncrhonized keyword makes it thread-safe
-    public static synchronized WalletRepo getInstance() {
-        if (instance == null) {
-            instance = new WalletRepo();
-        }
-        return instance;
-    }
 }

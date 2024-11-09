@@ -1,20 +1,12 @@
 package com.angoor.project.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import com.angoor.project.model.Post;
+import com.angoor.project.model.Resource;
 
+@Repository
+public interface PostRepo extends JpaRepository<Post,Integer> {
 
-public class PostRepo {
-	private static PostRepo instance;
-
-	private PostRepo() {
-		
-	}
-	
-    // Syncrhonized keyword makes it thread-safe
-    public static synchronized PostRepo getInstance() {
-        if (instance == null) {
-            instance = new PostRepo();
-        }
-        return instance;
-    }
 }

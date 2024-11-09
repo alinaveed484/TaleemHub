@@ -1,20 +1,12 @@
 package com.angoor.project.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import com.angoor.project.model.Calender;
+import com.angoor.project.model.Chat;
 
-
-public class CalenderRepo {
-	private static CalenderRepo instance;
-
-	private CalenderRepo() {
-		
-	}
+@Repository
+public interface CalenderRepo extends JpaRepository<Calender,Integer>{
 	
-    // Syncrhonized keyword makes it thread-safe
-    public static synchronized CalenderRepo getInstance() {
-        if (instance == null) {
-            instance = new CalenderRepo();
-        }
-        return instance;
-    }
 }
