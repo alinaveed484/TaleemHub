@@ -15,6 +15,7 @@ import com.angoor.project.model.Teacher;
 import com.angoor.project.repository.StudentRepository;
 import com.angoor.project.repository.TeacherRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,26 +27,28 @@ import java.util.Map;
 public class MentorshipManager {
 
     //@Transient Can be used for attributes that you don't want the ORM to map to Columns in the DB
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private TeacherRepository teacherRepository;
+	private final StudentRepository studentRepository;
+	private final TeacherRepository teacherRepository;
 
     private int studentCount = 0;
     private int teacherCount = 0;
 
-    private List<Student> studentsInMemory = new ArrayList<>();
-    private List<Teacher> teachersInMemory = new ArrayList<>();
-    
-    //create a table for student mentorship request to teacher (selectMentor use case)
+    private static List<Student> studentsInMemory = new ArrayList<>();
+    private static List<Teacher> teachersInMemory = new ArrayList<>();
+
+	@Autowired
+	public MentorshipManager(StudentRepository studentRepository, TeacherRepository teacherRepository) {
+		this.studentRepository = studentRepository;
+		this.teacherRepository = teacherRepository;
+	}
+
+	//create a table for student mentorship request to teacher (selectMentor use case)
     
 
     @PostConstruct
     public void init() {
-        this.studentsInMemory = studentRepository.findAll();
-        this.teachersInMemory = teacherRepository.findAll();
+        studentsInMemory = studentRepository.findAll();
+        teachersInMemory = teacherRepository.findAll();
         this.studentCount = studentsInMemory.size();
         this.teacherCount = teachersInMemory.size();
     }
@@ -74,7 +77,6 @@ public class MentorshipManager {
     
     public Map<String, Object> displayTeachers(String subject){
     	Map<String, Object> response = new HashMap<>();
-    	
     	for(Teacher t: teachersInMemory) {
     		if(subject.equals(t.getSubjectSpecialization())){
     			response.put(t.getFirstName()+t.getLastName(), t.getProfilePhotoURL());
@@ -103,9 +105,10 @@ public class MentorshipManager {
     	}
     	return response;
     }
-    
+
+	@Transactional
     public Map<String, Object> sendMentorRequest(Integer teacherID, Integer studentID){
-    	
+
     	Map<String, Object> response = new HashMap<>();
     	Teacher TT = null;
     	Student SS = null;
@@ -124,6 +127,9 @@ public class MentorshipManager {
     	
     	SS.addMentorRequest(TT);
     	TT.addMentorRequest(SS);
+
+		studentRepository.save(SS);
+		teacherRepository.save(TT);
     	
     	return null;
     }

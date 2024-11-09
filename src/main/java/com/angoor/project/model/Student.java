@@ -28,7 +28,7 @@ public class Student{
     @Column(name = "profilePhotoURL")
     private String profilePhotoURL;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "Student_Teacher",
             joinColumns = @JoinColumn(name = "studentId"),
@@ -37,7 +37,7 @@ public class Student{
     private Set<Teacher> teachers = new HashSet<>();
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "Student_Teacher_Request",
             joinColumns = @JoinColumn(name = "studentId"),
@@ -110,7 +110,9 @@ public class Student{
     public void setTeachers(Set<Teacher> teachers) {
         this.teachers = teachers;
     }
-    
+    public Set<Teacher> getTeacherRequests() {
+        return teacherRequests;
+    }
     public void addMentorRequest(Teacher t) {
     	teacherRequests.add(t);
     }

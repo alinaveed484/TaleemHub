@@ -1,7 +1,9 @@
 package com.angoor.taleemhub;
 
 import com.angoor.project.model.Student;
+import com.angoor.project.model.Teacher;
 import com.angoor.project.repository.StudentRepository;
+import com.angoor.project.repository.TeacherRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
@@ -34,6 +35,9 @@ class TaleemHubApplicationTests {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private TeacherRepository teacherRepository;
+
     @Test
     public void testCreateStudent() {
         // Create a new student object
@@ -51,6 +55,80 @@ class TaleemHubApplicationTests {
         assertNotNull(savedStudent.getStudentId());  // Ensure the ID is generated
         assertEquals("John", savedStudent.getFirstName());
         assertEquals("Doe", savedStudent.getLastName());
+    }
+
+    @Test
+    public void testManyToManyRelationship() {
+        // Create a teacher
+        Teacher teacher = new Teacher();
+        teacher.setFirstName("John");
+        teacher.setLastName("Doe");
+        teacher.setSubjectSpecialization("Math");
+        teacher = teacherRepository.save(teacher);
+
+        // Create a student
+        Student student = new Student();
+        student.setFirstName("Alice");
+        student.setLastName("Smith");
+        student.setEmail("alice.smith@example.com");
+
+        // Add teacher to student
+        student.getTeachers().add(teacher);  // Add teacher to student's teachers set
+        teacher.getStudents().add(student);
+
+        // Save student (this will also persist the relationship)
+        student = studentRepository.save(student);
+
+        // Reload student from the database to check relationships
+        Student fetchedStudent = studentRepository.findById(student.getStudentId()).orElseThrow();
+
+        // Assert the teacher is added correctly
+        assertTrue(fetchedStudent.getTeachers().contains(teacher), "Teacher should be linked to the student");
+
+        // Assert the student is linked back to the teacher
+        Teacher fetchedTeacher = teacherRepository.findById(teacher.getTeacherId()).orElseThrow();
+        assertTrue(fetchedTeacher.getStudents().contains(fetchedStudent), "Student should be linked to the teacher");
+    }
+
+    @Test
+    public void testManyToManyRelationshipRequests() {
+        // Create a teacher
+        Teacher teacher = new Teacher();
+        teacher.setFirstName("John");
+        teacher.setLastName("Doe");
+        teacher.setSubjectSpecialization("Math");
+
+        // Create a student
+        Student student = new Student();
+        student.setFirstName("Alice");
+        student.setLastName("Smith");
+        student.setEmail("alice.smith@example.com");
+
+        // Add teacher to student
+        student.getTeacherRequests().add(teacher);  // Add teacher to student's teachers set
+        teacher.getStudentRequests().add(student);
+
+        // Save student (this will also persist the relationship)
+        student = studentRepository.save(student);
+        teacher = teacherRepository.save(teacher);
+
+        // Reload student from the database to check relationships
+        Student fetchedStudent = studentRepository.findById(student.getStudentId()).orElseThrow();
+        Teacher fetchedTeacher = teacherRepository.findById(teacher.getTeacherId()).orElseThrow();
+
+        // Assert the teacher is added correctly
+        assertTrue(fetchedStudent.getTeacherRequests().contains(fetchedTeacher), "Teacher should be linked to the student");
+
+        // Assert the student is linked back to the teacher
+
+        assertTrue(fetchedTeacher.getStudentRequests().contains(fetchedStudent), "Student should be linked to the teacher");
+    }
+
+    @Test
+    @WithMockUser(username = "admin", password = "admin")
+    public void testSelectMentorEndpoint() throws Exception {
+        mockMvc.perform(get("/student/select_mentor/send_mentor_request?teacherID=1&studentID=1"))  // Perform a GET request to /hello
+                .andExpect(MockMvcResultMatchers.status().isOk());// Check "status" valu
     }
 
 }

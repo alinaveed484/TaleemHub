@@ -1,6 +1,11 @@
 package com.angoor.project.controller;
 
+import com.angoor.project.model.Teacher;
+import com.angoor.project.repository.StudentRepository;
+import com.angoor.project.repository.TeacherRepository;
 import com.angoor.project.service.*;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,10 +19,18 @@ public class TaleemHub {
 	//main controller
 	ChatHub chatService = new ChatHub();
 	ResourceHub resourceService = new ResourceHub();
-	MentorshipManager managementService = new MentorshipManager();
+
+    private final MentorshipManager managementService;
+
+    @Autowired
+    public TaleemHub(MentorshipManager managementService) {
+        this.managementService = managementService;
+    }
+
+	//MentorshipManager managementService = new MentorshipManager();
 	Forum forumService = new Forum();
-	
-	
+
+
     @GetMapping("/hello")
     public Map<String, Object> sayHello() {
         Map<String, Object> response = new HashMap<>();
@@ -46,10 +59,9 @@ public class TaleemHub {
         return response;
     }
     
-    @PostMapping("/student/select_mentor/send_mentor_request")
+    @GetMapping("/student/select_mentor/send_mentor_request")
     public Map<String, Object> selectMentor_sendMentorRequest(@RequestParam Integer teacherID, @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
-        
         response = managementService.sendMentorRequest(teacherID,studentID);
         //this map will contain all the details of the single teacher.
         
