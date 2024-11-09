@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.angoor.project.model.Message;
 import com.angoor.project.model.Payment;
 
-@Repository
-public interface MessageRepo extends JpaRepository<Message,Integer>{
+public interface MessageRepo{
 
 }

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.angoor.project.model.Post;
 import com.angoor.project.model.Resource;
 
-@Repository
-public interface PostRepo extends JpaRepository<Post,Integer> {
+public interface PostRepo{
 
 }

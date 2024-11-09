@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.angoor.project.model.Calender;
 import com.angoor.project.model.Chat;
 
-@Repository
-public interface CalenderRepo extends JpaRepository<Calender,Integer>{
+public interface CalenderRepo{
 	
 }
