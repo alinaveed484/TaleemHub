@@ -1,20 +1,12 @@
 package com.angoor.project.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import com.angoor.project.model.Payment;
+import com.angoor.project.model.Person;
 
+@Repository
+public interface PaymentRepo extends JpaRepository<Payment,Integer> {
 
-public class PaymentRepo {
-	private static PaymentRepo instance;
-
-	private PaymentRepo() {
-		
-	}
-	
-    // Syncrhonized keyword makes it thread-safe
-    public static synchronized PaymentRepo getInstance() {
-        if (instance == null) {
-            instance = new PaymentRepo();
-        }
-        return instance;
-    }
 }
