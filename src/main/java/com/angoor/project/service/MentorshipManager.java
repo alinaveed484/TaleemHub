@@ -110,6 +110,7 @@ public class MentorshipManager {
     public Map<String, Object> sendMentorRequest(Integer teacherID, Integer studentID){
 
     	Map<String, Object> response = new HashMap<>();
+ 
     	Teacher TT = null;
     	Student SS = null;
     	for(Teacher t:teachersInMemory) {
@@ -124,14 +125,17 @@ public class MentorshipManager {
     			break;
     		}
     	}
-    	
+    	if(TT == null || SS == null) {
+    		response.put("Error","Teacher or Student ID not found");
+    		return response;
+    	}
     	SS.addMentorRequest(TT);
     	TT.addMentorRequest(SS);
 
 		studentRepository.save(SS);
 		teacherRepository.save(TT);
-    	
-    	return null;
+    	response.put("value", "Success!");
+    	return response;
     }
 }
 
