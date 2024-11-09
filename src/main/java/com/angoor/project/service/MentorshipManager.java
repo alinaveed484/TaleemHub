@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MentorshipManager {
@@ -37,6 +38,9 @@ public class MentorshipManager {
 
     private List<Student> studentsInMemory = new ArrayList<>();
     private List<Teacher> teachersInMemory = new ArrayList<>();
+    
+    //create a table for student mentorship request to teacher (selectMentor use case)
+    
 
     @PostConstruct
     public void init() {
@@ -56,7 +60,7 @@ public class MentorshipManager {
         teacherRepository.save(teacher);
     }
 
-    public void assignTeacherToStudent(int studentId, int teacherId) {
+    public void assignTeacherToStudent(Integer studentId, Integer teacherId) {
         Student student = studentsInMemory.stream().filter(s -> s.getStudentId() == studentId).findFirst().orElse(null);
         Teacher teacher = teachersInMemory.stream().filter(t -> t.getTeacherId() == teacherId).findFirst().orElse(null);
 
@@ -67,7 +71,61 @@ public class MentorshipManager {
             teacherRepository.save(teacher);
         }
     }
-
-
+    
+    public Map<String, Object> displayTeachers(String subject){
+    	Map<String, Object> response = new HashMap<>();
+    	
+    	for(Teacher t: teachersInMemory) {
+    		if(subject.equals(t.getSubjectSpecialization())){
+    			response.put(t.getFirstName()+t.getLastName(), t.getProfilePhotoURL());
+    		}
+    	}
+    	return response;
+    }
+    
+    public Map<String, Object> showTeacherDetails(Integer teacherID){
+    	Map<String, Object> response = new HashMap<>();
+    	for(Teacher t: teachersInMemory) {
+    		if(teacherID == t.getTeacherId()) {
+    			
+    			response.put("teacherId", teacherID.toString());
+    			response.put("firstName", t.getFirstName());
+    			response.put("lastName", t.getLastName());
+    			response.put("yearsExperience", t.getYearsExperience().toString());
+    			response.put("email", t.getEmail());
+    			response.put("phone", t.getPhone());
+    			response.put("hireDate", t.getHireDate().toString());
+    			response.put("subjectSpecialization", t.getSubjectSpecialization());
+    			response.put("qualification", t.getQualification());
+    			response.put("profilePhotoURL", t.getProfilePhotoURL());
+    			break;
+    		}
+    	}
+    	return response;
+    }
+    
+    public Map<String, Object> sendMentorRequest(Integer teacherID, Integer studentID){
+    	
+    	Map<String, Object> response = new HashMap<>();
+    	Teacher TT = null;
+    	Student SS = null;
+    	for(Teacher t:teachersInMemory) {
+    		if(teacherID == t.getTeacherId()) {
+    			TT = t;
+    			break;
+    		}
+    	}
+    	for(Student s:studentsInMemory) {
+    		if(studentID == s.getStudentId()) {
+    			SS = s;
+    			break;
+    		}
+    	}
+    	
+    	SS.addMentorRequest(TT);
+    	TT.addMentorRequest(SS);
+    	
+    	return null;
+    }
 }
 

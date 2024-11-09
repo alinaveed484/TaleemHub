@@ -43,6 +43,9 @@ public class Teacher {
 
     @ManyToMany(mappedBy = "teachers")
     private Set<Student> students = new HashSet<>();
+    
+    @ManyToMany(mappedBy = "teacherRequests")
+    private Set<Student> studentRequests = new HashSet<>();
 
     public Teacher(String firstName, String lastName, int yearsExperience, String email, String phone, LocalDate hireDate, String subjectSpecialization, Qualification qualification, String profilePhotoURL) {
         this.firstName = firstName;
@@ -60,7 +63,7 @@ public class Teacher {
 
     }
 
-    public void setTeacherId(int teacherId) {
+    public void setTeacherId(Integer teacherId) {
         this.teacherId = teacherId;
     }
     public void setFirstName(String firstName) {
@@ -69,7 +72,7 @@ public class Teacher {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    public void setYearsExperience(int yearsExperience) {
+    public void setYearsExperience(Integer yearsExperience) {
         this.yearsExperience = yearsExperience;
     }
     public void setEmail(String email) {
@@ -90,7 +93,7 @@ public class Teacher {
     public void setProfilePhotoURL(String profilePhotoURL) {
         this.profilePhotoURL = profilePhotoURL;
     }
-    public int getTeacherId() {
+    public Integer getTeacherId() {
         return teacherId;
     }
     public String getFirstName() {
@@ -99,7 +102,7 @@ public class Teacher {
     public String getLastName() {
         return lastName;
     }
-    public int getYearsExperience() {
+    public Integer getYearsExperience() {
         return yearsExperience;
     }
     public String getEmail() {
@@ -114,8 +117,8 @@ public class Teacher {
     public String getSubjectSpecialization() {
         return subjectSpecialization;
     }
-    public Qualification getQualification() {
-        return qualification;
+    public String getQualification() {
+        return qualification.toString();
     }
     public String getProfilePhotoURL() {
         return profilePhotoURL;
@@ -126,4 +129,9 @@ public class Teacher {
     public void setStudents(Set<Student> students) {
         this.students = students;
     }
+    
+    public void addMentorRequest(Student s) {
+    	studentRequests.add(s);
+    }
+    
 }
