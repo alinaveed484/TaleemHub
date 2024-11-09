@@ -26,5 +26,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Set up environment variables
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+        run: |
+          echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
+          echo "DB_USER=${DB_USER}" >> $GITHUB_ENV
     - name: Build with Maven
       run:  mvn clean verify --file pom.xml
