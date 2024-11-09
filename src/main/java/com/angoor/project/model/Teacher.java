@@ -39,12 +39,10 @@ public class Teacher {
     private String profilePhotoURL;
 
 
-
-
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(mappedBy = "teachers", fetch = FetchType.EAGER)
     private Set<Student> students = new HashSet<>();
     
-    @ManyToMany(mappedBy = "teacherRequests")
+    @ManyToMany(mappedBy = "teacherRequests", fetch = FetchType.EAGER)
     private Set<Student> studentRequests = new HashSet<>();
 
     public Teacher(String firstName, String lastName, int yearsExperience, String email, String phone, LocalDate hireDate, String subjectSpecialization, Qualification qualification, String profilePhotoURL) {
@@ -129,7 +127,10 @@ public class Teacher {
     public void setStudents(Set<Student> students) {
         this.students = students;
     }
-    
+    public Set<Student> getStudentRequests(){
+        return studentRequests;
+    }
+
     public void addMentorRequest(Student s) {
     	studentRequests.add(s);
     }
