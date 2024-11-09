@@ -126,15 +126,4 @@ public class Teacher {
     public void setStudents(Set<Student> students) {
         this.students = students;
     }
-    @Override
-    public int hashCode() {
-        return ID.hashCode();
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Teacher teacher = (Teacher) obj;
-        return ID.equals(teacher.ID);
-    }
 }
