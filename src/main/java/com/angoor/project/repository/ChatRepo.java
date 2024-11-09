@@ -13,7 +13,7 @@ public class ChatRepo {
     // Syncrhonized keyword makes it thread-safe
     public static synchronized ChatRepo getInstance() {
         if (instance == null) {
-            instance = new CommentRepo();
+            instance = new ChatRepo();
         }
         return instance;
     }
