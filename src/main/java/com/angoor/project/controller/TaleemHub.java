@@ -3,6 +3,7 @@ package com.angoor.project.controller;
 import com.angoor.project.service.ChatHub;
 import com.angoor.project.service.MentorshipManager;
 import com.angoor.project.service.ResourceHub;
+import com.angoor.project.service.Forum;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
