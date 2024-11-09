@@ -17,18 +17,19 @@ import java.util.Map;
 @RestController
 public class TaleemHub {
 	//main controller
-	ChatHub chatService = new ChatHub();
-	ResourceHub resourceService = new ResourceHub();
-
+	//private final ChatHub chatService;
+	private final ResourceHub resourceService;
+	//private final Forum forumService;
     private final MentorshipManager managementService;
 
     @Autowired
-    public TaleemHub(MentorshipManager managementService) {
+    public TaleemHub(MentorshipManager managementService,ResourceHub resourceService) {
         this.managementService = managementService;
+        this.resourceService = resourceService;
     }
 
 	//MentorshipManager managementService = new MentorshipManager();
-	Forum forumService = new Forum();
+
 
 
     @GetMapping("/hello")
