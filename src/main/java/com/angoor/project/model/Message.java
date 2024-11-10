@@ -3,22 +3,48 @@ package com.angoor.project.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 
+@Entity
+@Table(name = "Message")
 public class Message {
-    // Getters and Setters
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "message_id")
+    private Integer messageId;
+
+    @Column(name = "content", nullable = false)
     private String content;
-    private Integer studentID;
-    private Integer teacherID;
 
-    private String sender;
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    private Person sender;
 
-    private String timeStamp;
+    @Column(name = "timestamp")
+    private LocalDateTime timeStamp;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private MessageType type;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
+
+    // Constructors, Getters, and Setters
+
+    public Message() {}
+
+    public Message(String content, Integer studentID, Integer teacherID, Person sender, LocalDateTime timeStamp, MessageType type) {
+        this.content = content;
+        this.sender = sender;
+        this.timeStamp = timeStamp;
+        this.type = type;
+    }
 
     public String getContent() {
         return content;
@@ -28,35 +54,19 @@ public class Message {
         this.content = content;
     }
 
-    public Integer getStudentID() {
-        return studentID;
-    }
-
-    public void setStudentID(Integer studentID) {
-        this.studentID = studentID;
-    }
-
-    public Integer getTeacherID() {
-        return teacherID;
-    }
-
-    public void setTeacherID(Integer teacherID) {
-        this.teacherID = teacherID;
-    }
-
-    public String getSender() {
+    public Person getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(Person sender) {
         this.sender = sender;
     }
 
-    public String getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -68,6 +78,12 @@ public class Message {
         this.type = type;
     }
 
+    public Chat getChat() {
+        return chat;
+    }
 
-
+    public void setChat(Chat chat)
+    {
+        this.chat = chat;
+    }
 }

@@ -82,6 +82,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
         </dependency>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 1878e816f0e36a47b2286a0015e9ba5f8a0a9bb0
 
     </dependencies>
 

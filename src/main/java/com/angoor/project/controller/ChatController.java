@@ -2,35 +2,44 @@ package com.angoor.project.controller;
 
 import com.angoor.project.model.Chat;
 import com.angoor.project.model.Message;
+import com.angoor.project.repository.ChatRepo;
+import com.angoor.project.repository.MessageRepo;
+import com.angoor.project.service.ChatHub;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
+@RequestMapping("/chat")  // Use a unique path for this controller
 public class ChatController {
 
      private final SimpMessagingTemplate messagingTemplate;
+     private final ChatHub chatService;
+     private final ChatRepo chatRepo;
+     private final MessageRepo messageRepo;
 
-     public ChatController(SimpMessagingTemplate messagingTemplate) {
+     @Autowired
+     public ChatController(SimpMessagingTemplate messagingTemplate, ChatHub chatService, MessageRepo messageRepo, ChatRepo chatRepo) {
           this.messagingTemplate = messagingTemplate;
+          this.chatService = chatService;
+          this.chatRepo = chatRepo;
+          this.messageRepo = messageRepo;
      }
 
-     private Map<String, Chat> chatHistory = new HashMap<>();
-
-     @MessageMapping({"/teacher/answer_student/chat.sendMessage", "/student/question_teacher/chat.sendMessage"})
+     @MessageMapping({"/chat/teacher/answer_student/chat.sendMessage", "/chat/student/question_teacher/chat.sendMessage"})
      public void sendMessage(@Payload Message message){
 
-          String chatKey = generateChatKey(message.getTeacherID(), message.getStudentID());
+          String chatKey = generateChatKey(message.getChat().getTeacher().getId(), message.getChat().getStudent().getId());
 
-          Chat chat = chatHistory.computeIfAbsent(chatKey, k -> new Chat(message.getTeacherID(), message.getStudentID()));
-
-          chat.addMessage(message);
+          Chat chat = chatService.saveMessage(message);
 
           String destination = "/topic/chat/" + chatKey;
 
@@ -42,10 +51,13 @@ public class ChatController {
           return "t" + teacherID.toString() + "-" + "s" + studentID.toString();
      }
 
-     public Map<String, Chat> getChatHistory() {
-          return chatHistory;
-     }
 
+     @GetMapping("/hello2")
+     public Map<String, Object> sayHello2() {
+          Map<String, Object> response = new HashMap<>();
+          response.put("message", "Hello, World!");
+          return response;
+     }
 
 
 }
