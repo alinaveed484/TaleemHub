@@ -9,11 +9,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-enum uploader_type {
-    Teacher,Student
-}
+
 
 @Entity
 @Table(name = "resource")
@@ -22,55 +22,70 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resource_id")
     private Integer resourceID;
-	@Column(name = "uploader_id")
-	private Integer uploaderID;
-	@Enumerated(EnumType.STRING)
-	@Column(name = "uploader_type")
-	private uploader_type uploaderType;
-	@Column(name = "resource_type")
-	private String resourceType;
-	@Column(name = "resource_url")
+	
+	@Column(name = "title", nullable = false)
+	private String title;
+	
+    @ManyToOne
+    @JoinColumn(name = "uploader_id", nullable = false)
+    private Person uploader;  // Each Resource is linked to a Person (Student/Teacher)
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "resource_category", nullable = false)
+	private resource_category resourceCategory;
+	
+	@Column(name = "resource_url", nullable = false)
 	private String resourceUrl;
 	
-    public Resource(Integer resourceID, Integer uploaderID, uploader_type uploaderType, String resourceType,String resourceUrl) {
+    public Resource(Integer resourceID,String title, Person uploader, resource_category resourceCategory,String resourceUrl) {
         this.resourceID = resourceID;
-        this.uploaderID = uploaderID;
-        this.uploaderType = uploaderType;
-        this.resourceType = resourceType;
+        this.title = title;
+        this.uploader = uploader;
+        this.resourceCategory = resourceCategory;
+        this.resourceUrl = resourceUrl;
+    }
+    public Resource(String title, Person uploader, resource_category resourceCategory,String resourceUrl) {
+        this.title = title;
+        this.uploader = uploader;
+        this.resourceCategory = resourceCategory;
         this.resourceUrl = resourceUrl;
     }
     public Resource() {
     	
     }
-	public String getResourceType() {
-		return resourceType;
+	public String getTitle() {
+		return title;
 	}
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
+	public String getResourceCategory() {
+		return resourceCategory.toString();
 	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public void setResourceCategory(resource_category resourceCategory) {
+		this.resourceCategory = resourceCategory;
+	}
+	public Person getUploader() {
+		return uploader;
+	}
+	public void setUploader(Person uploader) {
+		this.uploader = uploader;
+	}
+
 	public Integer getResourceID() {
 		return resourceID;
 	}
-	public Integer getUploaderID() {
-		return uploaderID;
-	}
-	public String getUploaderType() {
-		return uploaderType.toString();
-	}
+
 	public String getResourceUrl() {
 		return resourceUrl;
 	}
 	public void setResourceID(Integer resourceID) {
 		this.resourceID = resourceID;
 	}
-	public void setUploaderID(Integer uploaderID) {
-		this.uploaderID = uploaderID;
-	}
-	public void setUploaderType(String uploaderType) {
-		this.uploaderType = uploader_type.valueOf(uploaderType);
-	}
+	
 	public void setResourceUrl(String resourceUrl) {
 		this.resourceUrl = resourceUrl;
 	}
     
 }
+
