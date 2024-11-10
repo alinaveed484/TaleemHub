@@ -1,27 +1,24 @@
 package com.angoor.project.service;
 
-import com.angoor.project.repository.LogRepo;
-import com.angoor.project.repository.PaymentRepo;
+import com.angoor.project.model.*;
+import com.angoor.project.repository.*;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import com.angoor.project.model.Student;
-import com.angoor.project.model.Teacher;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 import com.angoor.project.model.Student;
 import com.angoor.project.model.Teacher;
-import com.angoor.project.repository.StudentRepository;
-import com.angoor.project.repository.TeacherRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.CloseableThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 public class MentorshipManager {
@@ -29,6 +26,7 @@ public class MentorshipManager {
     //@Transient Can be used for attributes that you don't want the ORM to map to Columns in the DB
 	private final StudentRepository studentRepository;
 	private final TeacherRepository teacherRepository;
+	private final PersonRepo personRepo;
 
     private int studentCount = 0;
     private int teacherCount = 0;
@@ -37,9 +35,10 @@ public class MentorshipManager {
     private static List<Teacher> teachersInMemory = new ArrayList<>();
 
 	@Autowired
-	public MentorshipManager(StudentRepository studentRepository, TeacherRepository teacherRepository) {
+	public MentorshipManager(StudentRepository studentRepository, TeacherRepository teacherRepository, PersonRepo personRepo) {
 		this.studentRepository = studentRepository;
 		this.teacherRepository = teacherRepository;
+		this.personRepo = personRepo;
 	}
 
 	//create a table for student mentorship request to teacher (selectMentor use case)
@@ -143,5 +142,88 @@ public class MentorshipManager {
 		response.put("value", "Success!");
 		return response;
 	}
+
+	// Chat Functionalities
+
+	@MessageMapping("/user.addUser")
+	@SendTo("/user/topic")
+	public void connect(Person person){
+		person.setStatus(true);
+		Person p = personRepo.findById(person.getId()).orElse(null);
+
+		if (p != null) {
+			if (p instanceof Student) {
+				Student s = (Student) p;
+				s.setStatus(true);
+				studentRepository.save(s);
+			}
+			else if (p instanceof Teacher) {
+				Teacher t = (Teacher) p;
+				t.setStatus(true);
+				teacherRepository.save(t);
+			}
+		}
+
+
+	}
+
+	@MessageMapping("/user.addUser")
+	@SendTo("/user/topic")
+	public void disconnect(Person person){
+		var p = personRepo.findById(person.getId()).orElse(null);
+
+		if (p != null){
+			p.setStatus(false);
+			personRepo.save(p);
+		}
+
+	}
+
+	// implement this after discussing with Ali
+	// in case of student, this function will return a list of his registered teachers
+	// in case of teacher, this function will return a list of his registered students
+//	public Set<Person> displayConnectedUsers(Person person) {
+//		if (person instanceof Student) {
+//			Student student = (Student) person;
+//			return new HashSet<>(student.getTeachers()); // returns Set<Teacher>
+//		} else if (person instanceof Teacher) {
+//			Teacher teacher = (Teacher) person;
+//			return new HashSet<>(teacher.getStudents()); // returns Set<Student>
+//		}
+//		return Collections.emptySet();
+//	}
+
+	public Set<PersonDTO> getConnectedUsersDTO(Person person) {
+		// Get connected users (students for a teacher, teachers for a student)
+		Set<Person> connectedUsers = displayConnectedUsers(person);
+
+		// Convert each Person to PersonDTO and collect into a set
+		return connectedUsers.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toSet());
+	}
+
+	private PersonDTO convertToDTO(Person person) {
+		return new PersonDTO(
+				person.getId(),
+				person.getFirstName(),
+				person.getLastName(),
+				person.getStatus()
+		);
+	}
+
+	public Set<Person> displayConnectedUsers(Person person) {
+		if (person instanceof Student) {
+			Student student = (Student) person;
+			return new HashSet<>(student.getTeachers()); // Return Set<Teacher>
+		} else if (person instanceof Teacher) {
+			Teacher teacher = (Teacher) person;
+			return new HashSet<>(teacher.getStudents()); // Return Set<Student>
+		}
+		return new HashSet<>(); // Return empty set if person type is unrecognized
+	}
+
+
+
 }
 

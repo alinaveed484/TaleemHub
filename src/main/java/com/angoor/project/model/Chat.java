@@ -25,9 +25,16 @@ public class Chat {
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
 
+    public Chat() {
+    }
+
     public Chat(Person teacher, Person student) {
         this.teacher = teacher;
         this.student = student;
+    }
+
+    public Integer getChatId() {
+        return chatId;
     }
 
     public Person getTeacher() {
@@ -38,6 +45,14 @@ public class Chat {
         return student;
     }
 
+    public List<Message> getMessages()
+    {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
 
 
 }
