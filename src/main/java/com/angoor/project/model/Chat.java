@@ -5,10 +5,17 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
-
+@Entity
+@Table(name = "Chat")
 public class Chat {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_id")
+    private Integer chatId;
+    @Column(name = "teacher_id", nullable = false)
     private Integer teacherID;
+    @Column(name = "student_id", nullable = false)
     private Integer studentID;
 
     private List<Message> messages = new ArrayList<>();

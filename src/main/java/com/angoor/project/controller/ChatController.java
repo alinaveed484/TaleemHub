@@ -4,15 +4,16 @@ import com.angoor.project.model.Chat;
 import com.angoor.project.model.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/app")  // Use a unique path for this controller
 public class ChatController {
 
      private final SimpMessagingTemplate messagingTemplate;
@@ -46,6 +47,12 @@ public class ChatController {
           return chatHistory;
      }
 
+     @GetMapping("/hello2")
+     public Map<String, Object> sayHelloHello() {
+          Map<String, Object> response = new HashMap<>();
+          response.put("message", "Hello, World!");
+          return response;
+     }
 
 
 }

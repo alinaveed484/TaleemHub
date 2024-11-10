@@ -82,11 +82,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.angoor</groupId>
-            <artifactId>TaleemHub</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 
 
     </dependencies>
