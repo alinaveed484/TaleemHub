@@ -1,6 +1,8 @@
 package com.angoor.project.controller;
 
 import com.angoor.project.model.Teacher;
+import com.angoor.project.repository.CommentRepo;
+import com.angoor.project.repository.PostRepo;
 import com.angoor.project.repository.StudentRepository;
 import com.angoor.project.repository.TeacherRepository;
 import com.angoor.project.service.*;
@@ -21,11 +23,15 @@ public class TaleemHub {
 	private final ResourceHub resourceService;
 	//private final Forum forumService;
     private final MentorshipManager managementService;
+    private final PostRepo postRepo;
+    private final CommentRepo commentRepo;
 
     @Autowired
-    public TaleemHub(MentorshipManager managementService,ResourceHub resourceService) {
+    public TaleemHub(MentorshipManager managementService,ResourceHub resourceService, PostRepo postRepo, CommentRepo commentRepo) {
         this.managementService = managementService;
         this.resourceService = resourceService;
+        this.postRepo = postRepo;
+        this.commentRepo = commentRepo;
     }
 
 	//MentorshipManager managementService = new MentorshipManager();

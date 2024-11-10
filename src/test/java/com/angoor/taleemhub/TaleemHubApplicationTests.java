@@ -52,10 +52,22 @@ class TaleemHubApplicationTests {
         Student savedStudent = studentRepository.save(student);
 
         // Verify the student is saved
-        assertNotNull(savedStudent.getStudentId());  // Ensure the ID is generated
+        assertNotNull(savedStudent.getId());  // Ensure the ID is generated
+
+        // Verify that the student fields are correctly saved
         assertEquals("John", savedStudent.getFirstName());
         assertEquals("Doe", savedStudent.getLastName());
+        assertEquals(10, savedStudent.getGradeLevel());
+        assertEquals("john.doe@example.com", savedStudent.getEmail());
+        assertEquals("1234567890", savedStudent.getPhone());
+
+        // If student has associations with other entities (e.g., teachers or mentor requests), verify them
+        assertTrue(savedStudent.getTeachers().isEmpty()); // If teachers list is initially empty
+
+        // Optionally, verify the relationship with the Person class if required.
+        assertEquals("John", savedStudent.getFirstName());  // Check for the parent class' firstName (if Person is inherited)
     }
+
 
     @Test
     public void testManyToManyRelationship() {
@@ -80,15 +92,28 @@ class TaleemHubApplicationTests {
         student = studentRepository.save(student);
 
         // Reload student from the database to check relationships
-        Student fetchedStudent = studentRepository.findById(student.getStudentId()).orElseThrow();
+        Student fetchedStudent = studentRepository.findById(student.getId()).orElseThrow();
 
-        // Assert the teacher is added correctly
+        // Assert that the student was saved correctly
+        assertEquals("Alice", fetchedStudent.getFirstName());
+        assertEquals("Smith", fetchedStudent.getLastName());
+        assertEquals("alice.smith@example.com", fetchedStudent.getEmail());
+
+        // Assert the teacher is added correctly to the student's teachers list
         assertTrue(fetchedStudent.getTeachers().contains(teacher), "Teacher should be linked to the student");
 
-        // Assert the student is linked back to the teacher
-        Teacher fetchedTeacher = teacherRepository.findById(teacher.getTeacherId()).orElseThrow();
+        // Reload teacher from the database
+        Teacher fetchedTeacher = teacherRepository.findById(teacher.getId()).orElseThrow();
+
+        // Assert the teacher's students list contains the student
         assertTrue(fetchedTeacher.getStudents().contains(fetchedStudent), "Student should be linked to the teacher");
+
+        // Optionally, you could also assert that the teacher details are correct:
+        assertEquals("John", fetchedTeacher.getFirstName());
+        assertEquals("Doe", fetchedTeacher.getLastName());
+        assertEquals("Math", fetchedTeacher.getSubjectSpecialization());
     }
+
 
     @Test
     public void testManyToManyRelationshipRequests() {
@@ -104,25 +129,25 @@ class TaleemHubApplicationTests {
         student.setLastName("Smith");
         student.setEmail("alice.smith@example.com");
 
-        // Add teacher to student
-        student.getTeacherRequests().add(teacher);  // Add teacher to student's teachers set
-        teacher.getStudentRequests().add(student);
+        // Add teacher to student requests
+        student.getTeacherRequests().add(teacher);  // Add teacher to student's teacherRequests set
+        teacher.getStudentRequests().add(student);  // Add student to teacher's studentRequests set
 
-        // Save student (this will also persist the relationship)
+        // Save student and teacher (this will persist the relationship)
         student = studentRepository.save(student);
         teacher = teacherRepository.save(teacher);
 
         // Reload student from the database to check relationships
-        Student fetchedStudent = studentRepository.findById(student.getStudentId()).orElseThrow();
-        Teacher fetchedTeacher = teacherRepository.findById(teacher.getTeacherId()).orElseThrow();
+        Student fetchedStudent = studentRepository.findById(student.getId()).orElseThrow();
+        Teacher fetchedTeacher = teacherRepository.findById(teacher.getId()).orElseThrow();
 
-        // Assert the teacher is added correctly
+        // Assert the teacher is added correctly to student requests
         assertTrue(fetchedStudent.getTeacherRequests().contains(fetchedTeacher), "Teacher should be linked to the student");
 
-        // Assert the student is linked back to the teacher
-
+        // Assert the student is linked back to the teacher's requests
         assertTrue(fetchedTeacher.getStudentRequests().contains(fetchedStudent), "Student should be linked to the teacher");
     }
+
 
     @Test
     @WithMockUser(username = "admin", password = "admin")
