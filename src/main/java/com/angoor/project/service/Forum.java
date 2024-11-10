@@ -1,6 +1,7 @@
 package com.angoor.project.service;
 
 import com.angoor.project.model.Comment;
+import com.angoor.project.model.Person;
 import com.angoor.project.model.Post;
 import com.angoor.project.repository.StudentRepository;
 import com.angoor.project.repository.TeacherRepository;
@@ -24,5 +25,16 @@ public class Forum {
     public Forum(PostRepo postRepo, CommentRepo commentRepo) {
         this.postRepo = postRepo;
         this.commentRepo = commentRepo;
+    }
+
+    public void createPost(Post post, Person person) {
+        post.setPerson(person); // Set the person who created the post
+        postRepo.save(post);
+    }
+
+    public void createComment(Comment comment, Person person, Post post) {
+        comment.setPerson(person); // Set the person who created the comment
+        comment.setPost(post); // Set the post for the comment
+        commentRepo.save(comment);
     }
 }

@@ -17,4 +17,12 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;  // One Post can have multiple comments
+
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person person;  // Each Post is linked to a Person (Student/Teacher)
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
 }

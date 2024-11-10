@@ -102,10 +102,10 @@ public class MentorshipManager {
 			response.put("teacherId", teacherID.toString());
 			response.put("firstName", teacher.getFirstName());
 			response.put("lastName", teacher.getLastName());
-			response.put("yearsExperience", teacher.getYearsExperience().toString());
+			response.put("yearsExperience", (teacher.getYearsExperience() != null) ? teacher.getYearsExperience().toString() : null);
 			response.put("email", teacher.getEmail());
 			response.put("phone", teacher.getPhone());
-			response.put("hireDate", teacher.getHireDate().toString());
+			response.put("hireDate", (teacher.getHireDate() != null) ? teacher.getHireDate().toString() : null);
 			response.put("subjectSpecialization", teacher.getSubjectSpecialization());
 			response.put("qualification", teacher.getQualification());
 			response.put("profilePhotoURL", teacher.getProfilePhotoURL());
