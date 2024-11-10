@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 import com.angoor.project.model.Comment;
 import com.angoor.project.model.Log;
 
-public interface CommentRepo{
+import java.util.List;
 
+@Repository
+public interface CommentRepo extends JpaRepository<Comment, Integer>{
+    List<Comment> findByPost_PostId(Long postId);
 }
