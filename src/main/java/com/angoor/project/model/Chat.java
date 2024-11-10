@@ -13,31 +13,31 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_id")
     private Integer chatId;
-    @Column(name = "teacher_id", nullable = false)
-    private Integer teacherID;
-    @Column(name = "student_id", nullable = false)
-    private Integer studentID;
 
-    private List<Message> messages = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private Person teacher;
 
-    public Chat(Integer teacherID, Integer studentID) {
-        this.teacherID = teacherID;
-        this.studentID = studentID;
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Person student;
+
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages;
+
+    public Chat(Person teacher, Person student) {
+        this.teacher = teacher;
+        this.student = student;
     }
 
-    public Integer getTeacherID() {
-        return teacherID;
+    public Person getTeacher() {
+        return teacher;
     }
 
-    public Integer getStudentID() {
-        return studentID;
+    public Person getStudent() {
+        return student;
     }
 
-    public List<Message> getMessages() {
-        return messages;
-    }
 
-    public void addMessage(Message message) {
-        messages.add(message);
-    }
+
 }

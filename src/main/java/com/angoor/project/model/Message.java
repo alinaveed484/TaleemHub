@@ -20,14 +20,9 @@ public class Message {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "student_id")
-    private Integer studentID;
-
-    @Column(name = "teacher_id")
-    private Integer teacherID;
-
-    @Column(name = "sender", nullable = false)
-    private String sender;
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    private Person sender;
 
     @Column(name = "timestamp")
     private LocalDateTime timeStamp;
@@ -36,14 +31,16 @@ public class Message {
     @Column(name = "type")
     private MessageType type;
 
+    @ManyToOne
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
+
     // Constructors, Getters, and Setters
 
     public Message() {}
 
-    public Message(String content, Integer studentID, Integer teacherID, String sender, LocalDateTime timeStamp, MessageType type) {
+    public Message(String content, Integer studentID, Integer teacherID, Person sender, LocalDateTime timeStamp, MessageType type) {
         this.content = content;
-        this.studentID = studentID;
-        this.teacherID = teacherID;
         this.sender = sender;
         this.timeStamp = timeStamp;
         this.type = type;
@@ -57,27 +54,11 @@ public class Message {
         this.content = content;
     }
 
-    public Integer getStudentID() {
-        return studentID;
-    }
-
-    public void setStudentID(Integer studentID) {
-        this.studentID = studentID;
-    }
-
-    public Integer getTeacherID() {
-        return teacherID;
-    }
-
-    public void setTeacherID(Integer teacherID) {
-        this.teacherID = teacherID;
-    }
-
-    public String getSender() {
+    public Person getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(Person sender) {
         this.sender = sender;
     }
 
@@ -97,6 +78,12 @@ public class Message {
         this.type = type;
     }
 
+    public Chat getChat() {
+        return chat;
+    }
 
-
+    public void setChat(Chat chat)
+    {
+        this.chat = chat;
+    }
 }
