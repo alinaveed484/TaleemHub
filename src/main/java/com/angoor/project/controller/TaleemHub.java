@@ -1,6 +1,7 @@
 package com.angoor.project.controller;
 
 import com.angoor.project.model.Teacher;
+import com.angoor.project.model.resource_category;
 import com.angoor.project.repository.CommentRepo;
 import com.angoor.project.repository.PostRepo;
 import com.angoor.project.repository.StudentRepository;
@@ -8,10 +9,12 @@ import com.angoor.project.repository.TeacherRepository;
 import com.angoor.project.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,5 +78,21 @@ public class TaleemHub {
         return response;
     }
     
+    @GetMapping("/resource/upload_resources/get_resource_categories")
+    public Map<String, Object> upload_resources_getResourceCategories(){
+    	Map<String, Object> response = new HashMap<>();
+    	response = resourceService.getResourceCategories();
+    	return response;
+    }
+    
+    @PostMapping("/resource/upload_resources/upload_resource")
+    public ResponseEntity<String> upload_resources_uploadResource(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("title") String title,
+            @RequestParam("category") resource_category category,  // Enum parameter
+            @RequestParam("uploader_id") Integer uploaderId) {
+    	
+    	return resourceService.uploadResource(file,title,category,uploaderId);
+    }
     
 }
