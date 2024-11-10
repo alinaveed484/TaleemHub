@@ -1,5 +1,7 @@
 package com.angoor.project.controller;
 
+import com.angoor.project.model.Person;
+import com.angoor.project.model.PersonDTO;
 import com.angoor.project.model.Teacher;
 import com.angoor.project.repository.CommentRepo;
 import com.angoor.project.repository.PostRepo;
@@ -8,13 +10,16 @@ import com.angoor.project.repository.TeacherRepository;
 import com.angoor.project.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 public class TaleemHub {
@@ -74,6 +79,29 @@ public class TaleemHub {
         
         return response;
     }
-    
-    
+
+    // Chat Functionalities
+
+    @MessageMapping("/user.addUser")
+    @SendTo("/user/topic")
+    public Person connect(@Payload Person person){
+        managementService.connect(person);
+        return person;
+    }
+
+    @MessageMapping ("/user.disconnectUser")
+    @SendTo("/user/topic")
+    public Person disconnect(@Payload Person person) {
+        managementService.disconnect(person);
+        return person;
+    }
+
+    @PostMapping("/users")
+    @CrossOrigin(origins = "http://localhost:3000") // Allow requests from frontend origin
+    public ResponseEntity<Set<PersonDTO>> displayConnectedUsers(@RequestBody Person person) {
+        Set<PersonDTO> connectedUsers = managementService.getConnectedUsersDTO(person);
+        return ResponseEntity.ok(connectedUsers);
+    }
+
+
 }

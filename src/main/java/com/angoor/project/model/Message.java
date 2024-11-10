@@ -24,12 +24,20 @@ public class Message {
     @JoinColumn(name = "sender_id", nullable = false)
     private Person sender;
 
+    @ManyToOne
+    @JoinColumn(name = "recipient_id", nullable = false)
+    private Person recipient;
+
     @Column(name = "timestamp")
     private LocalDateTime timeStamp;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private MessageType type;
+
+    public Integer getMessageId() {
+        return messageId;
+    }
 
     @ManyToOne
     @JoinColumn(name = "chat_id", nullable = false)
@@ -60,6 +68,14 @@ public class Message {
 
     public void setSender(Person sender) {
         this.sender = sender;
+    }
+
+    public Person getRecipient(){
+        return recipient;
+    }
+
+    public void setRecipient(Person recipient) {
+        this.recipient = recipient;
     }
 
     public LocalDateTime getTimeStamp() {
