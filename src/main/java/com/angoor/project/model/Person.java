@@ -2,6 +2,8 @@ package com.angoor.project.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "person_type", discriminatorType = DiscriminatorType.STRING)
@@ -16,6 +18,12 @@ public abstract class Person {
     private String email;
     private String phone;
     private String profilePhotoURL;
+
+    @OneToMany(mappedBy = "person")
+    private List<Post> posts;  // A person can have multiple posts
+
+    @OneToMany(mappedBy = "person")
+    private List<Comment> comments;  // A person can have multiple comments
 
     public void setId(Integer id) {
         this.id = id;

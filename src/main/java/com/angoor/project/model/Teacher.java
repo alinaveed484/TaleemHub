@@ -54,7 +54,7 @@ public class Teacher extends Person{
         return subjectSpecialization;
     }
     public String getQualification() {
-        return qualification.toString();
+        return (qualification != null) ? qualification.toString() : null;
     }
     public Set<Student> getStudents() {
         return students;
