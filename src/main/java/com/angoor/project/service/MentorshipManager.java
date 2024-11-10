@@ -63,17 +63,23 @@ public class MentorshipManager {
         teacherRepository.save(teacher);
     }
 
-    public void assignTeacherToStudent(Integer studentId, Integer teacherId) {
-        Student student = studentsInMemory.stream().filter(s -> s.getStudentId() == studentId).findFirst().orElse(null);
-        Teacher teacher = teachersInMemory.stream().filter(t -> t.getTeacherId() == teacherId).findFirst().orElse(null);
+	public void assignTeacherToStudent(Integer studentId, Integer teacherId) {
+		// Find student and teacher using their IDs
+		Student student = studentRepository.findById(studentId).orElse(null);
+		Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
 
-        if (student != null && teacher != null) {
-            student.getTeachers().add(teacher);
-            teacher.getStudents().add(student);
-            studentRepository.save(student);
-            teacherRepository.save(teacher);
-        }
-    }
+		if (student != null && teacher != null) {
+			// Add the teacher to the student's list of teachers
+			student.getTeachers().add(teacher);
+
+			// Add the student to the teacher's list of students
+			teacher.getStudents().add(student);
+
+			// Save both the student and the teacher to the database (JPA handles the ManyToMany association)
+			studentRepository.save(student);
+			teacherRepository.save(teacher);
+		}
+	}
     
     public Map<String, Object> displayTeachers(String subject){
     	Map<String, Object> response = new HashMap<>();
@@ -84,58 +90,58 @@ public class MentorshipManager {
     	}
     	return response;
     }
-    
-    public Map<String, Object> showTeacherDetails(Integer teacherID){
-    	Map<String, Object> response = new HashMap<>();
-    	for(Teacher t: teachersInMemory) {
-    		if(teacherID == t.getTeacherId()) {
-    			
-    			response.put("teacherId", teacherID.toString());
-    			response.put("firstName", t.getFirstName());
-    			response.put("lastName", t.getLastName());
-    			response.put("yearsExperience", t.getYearsExperience().toString());
-    			response.put("email", t.getEmail());
-    			response.put("phone", t.getPhone());
-    			response.put("hireDate", t.getHireDate().toString());
-    			response.put("subjectSpecialization", t.getSubjectSpecialization());
-    			response.put("qualification", t.getQualification());
-    			response.put("profilePhotoURL", t.getProfilePhotoURL());
-    			break;
-    		}
-    	}
-    	return response;
-    }
+
+	public Map<String, Object> showTeacherDetails(Integer teacherID) {
+		Map<String, Object> response = new HashMap<>();
+
+		// Fetch Teacher entity from the database using the JPA repository
+		Teacher teacher = teacherRepository.findById(teacherID).orElse(null);
+
+		if (teacher != null) {
+			// Populate the response map with teacher details
+			response.put("teacherId", teacherID.toString());
+			response.put("firstName", teacher.getFirstName());
+			response.put("lastName", teacher.getLastName());
+			response.put("yearsExperience", teacher.getYearsExperience().toString());
+			response.put("email", teacher.getEmail());
+			response.put("phone", teacher.getPhone());
+			response.put("hireDate", teacher.getHireDate().toString());
+			response.put("subjectSpecialization", teacher.getSubjectSpecialization());
+			response.put("qualification", teacher.getQualification());
+			response.put("profilePhotoURL", teacher.getProfilePhotoURL());
+		} else {
+			// Teacher not found
+			response.put("Error", "Teacher not found");
+		}
+
+		return response;
+	}
+
 
 	@Transactional
-    public Map<String, Object> sendMentorRequest(Integer teacherID, Integer studentID){
+	public Map<String, Object> sendMentorRequest(Integer teacherID, Integer studentID) {
 
-    	Map<String, Object> response = new HashMap<>();
- 
-    	Teacher TT = null;
-    	Student SS = null;
-    	for(Teacher t:teachersInMemory) {
-    		if(teacherID == t.getTeacherId()) {
-    			TT = t;
-    			break;
-    		}
-    	}
-    	for(Student s:studentsInMemory) {
-    		if(studentID == s.getStudentId()) {
-    			SS = s;
-    			break;
-    		}
-    	}
-    	if(TT == null || SS == null) {
-    		response.put("Error","Teacher or Student ID not found");
-    		return response;
-    	}
-    	SS.addMentorRequest(TT);
-    	TT.addMentorRequest(SS);
+		Map<String, Object> response = new HashMap<>();
 
-		studentRepository.save(SS);
-		teacherRepository.save(TT);
-    	response.put("value", "Success!");
-    	return response;
-    }
+		// Fetch Teacher and Student using JPA repositories
+		Teacher teacher = teacherRepository.findById(teacherID).orElse(null);
+		Student student = studentRepository.findById(studentID).orElse(null);
+
+		if (teacher == null || student == null) {
+			response.put("Error", "Teacher or Student ID not found");
+			return response;
+		}
+
+		// Add the mentor request to the student and teacher
+		student.addMentorRequest(teacher); // Assuming you have this logic in your model
+		teacher.addMentorRequest(student); // Same for teacher
+
+		// Save the entities back to the database
+		studentRepository.save(student);
+		teacherRepository.save(teacher);
+
+		response.put("value", "Success!");
+		return response;
+	}
 }
 
