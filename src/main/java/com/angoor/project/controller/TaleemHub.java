@@ -49,34 +49,34 @@ public class TaleemHub {
         response.put("message", "Hello, World!");
         return response;
     }
-    
+
     @GetMapping("/student/select_mentor/display_teachers")
     public Map<String, Object> selectMentor_displayTeachers(@RequestParam String subject) {
         Map<String, Object> response = new HashMap<>();
-        
+
         response = managementService.displayTeachers(subject);
         //the map will only contain name and subject of all teachers.
-        
+
         return response;
     }
-    
-    
+
+
     @GetMapping("/student/select_mentor/show_teacher_details")
     public Map<String, Object> selectMentor_showTeacherDetails(@RequestParam Integer teacherID) {
         Map<String, Object> response = new HashMap<>();
-        
+
         response = managementService.showTeacherDetails(teacherID);
         //this map will contain all the details of the single teacher.
-        
+
         return response;
     }
-    
+
     @GetMapping("/student/select_mentor/send_mentor_request")
     public Map<String, Object> selectMentor_sendMentorRequest(@RequestParam Integer teacherID, @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
         response = managementService.sendMentorRequest(teacherID,studentID);
         //this map will contain all the details of the single teacher.
-        
+
         return response;
     }
 

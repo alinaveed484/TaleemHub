@@ -42,6 +42,9 @@ public abstract class Person {
 
     @OneToMany(mappedBy = "person")
     private List<Comment> comments;  // A person can have multiple comments
+    
+    @OneToMany(mappedBy = "uploader")
+    private List<Resource> resources;  // A person can have multiple comments
 
     public void setId(Integer id) {
         this.id = id;
