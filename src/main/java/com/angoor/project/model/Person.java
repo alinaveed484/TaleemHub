@@ -22,9 +22,14 @@ public abstract class Person {
     private boolean status = false;
 
     // Link to Wallet
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet wallet;
+
+    // Constructor
+    public Person() {
+        this.wallet = new Wallet(); // Initialize the wallet
+    }
 
     // One Person as a Teacher can have multiple Chat instances
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
