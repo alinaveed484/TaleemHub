@@ -18,9 +18,18 @@ public abstract class Person {
     private String email;
     private String phone;
     private String profilePhotoURL;
-
-
+    private Integer points = 0;
     private boolean status = false;
+
+    // Link to Wallet
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
+    private Wallet wallet;
+
+    // Constructor
+    public Person() {
+        this.wallet = new Wallet(); // Initialize the wallet
+    }
 
     // One Person as a Teacher can have multiple Chat instances
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -35,7 +44,6 @@ public abstract class Person {
 
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messagesReceived;
-
 
     @OneToMany(mappedBy = "person")
     private List<Post> posts;  // A person can have multiple posts
@@ -106,11 +114,22 @@ public abstract class Person {
     public void setMessagesSent(List<Message> messagesSent) {
         this.messagesSent = messagesSent;
     }
-
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+    public Integer getPoints() {
+        return points;
+    }
     public List<Message> getMessagesReceived() {
         return messagesReceived;
     }
     public void setMessagesReceived(List<Message> messagesReceived) {
         this.messagesReceived = messagesReceived;
+    }
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
+    }
+    public Wallet getWallet() {
+        return wallet;
     }
 }

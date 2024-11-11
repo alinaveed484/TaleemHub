@@ -52,10 +52,12 @@ public class ForumController {
         return ResponseEntity.ok(comment);
     }
 
-    // Endpoint to upvote a comment
-    @PostMapping("/comments/{commentId}/upvote")
-    public ResponseEntity<Comment> upvoteComment(@PathVariable Integer commentId) {
-        Comment updatedComment = forumService.upvoteComment(commentId);
+    // Endpoint to vote on a comment (upvote or downvote)
+    @PostMapping("/comments/{commentId}/vote")
+    public ResponseEntity<Comment> voteComment(@PathVariable Integer commentId,
+                                               @RequestParam("voteType") String voteType) {
+        Comment updatedComment = forumService.voteComment(commentId, voteType);
         return ResponseEntity.ok(updatedComment);
     }
+
 }

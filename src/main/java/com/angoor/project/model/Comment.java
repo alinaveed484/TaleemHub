@@ -17,6 +17,26 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;  // Each Comment is linked to a single Post
 
+    public Person getPerson() {
+        return person;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Integer getComment_id() {
+        return comment_id;
+    }
+
     @ManyToOne
     @JoinColumn(name = "person_id")
     private Person person;  // Each Comment is linked to a Person (Student/Teacher)
