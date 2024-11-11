@@ -31,6 +31,30 @@ public class Post {
     @JoinColumn(name = "person_id")
     private Person person;  // Each Post is linked to a Person (Student/Teacher)
 
+    public Person getPerson() {
+        return person;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Integer getPostId() {
+        return postId;
+    }
+
     public void setPerson(Person person) {
         this.person = person;
     }
