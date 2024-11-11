@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.angoor.project.model.Payment;
 import com.angoor.project.model.Person;
 
-
-public interface PaymentRepo {
+@Repository
+public interface PaymentRepo extends JpaRepository<Payment, Integer>{
 
 }

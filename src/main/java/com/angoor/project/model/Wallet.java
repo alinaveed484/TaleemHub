@@ -9,7 +9,7 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private int currency = 0; // default currency
+    private double currency = 0; // default currency
 
     // Link to the Person owning this wallet
     @OneToOne(mappedBy = "wallet")
@@ -18,7 +18,7 @@ public class Wallet {
     public Integer getId() {
         return id;
     }
-    public int getCurrency() {
+    public double getCurrency() {
         return currency;
     }
     public Person getPerson() {
@@ -27,7 +27,7 @@ public class Wallet {
     public void setId(Integer id) {
         this.id = id;
     }
-    public void setCurrency(int currency) {
+    public void setCurrency(double currency) {
         this.currency = currency;
     }
     public void setPerson(Person person) {
@@ -38,6 +38,9 @@ public class Wallet {
     }
     // Constructors
     public Wallet() {
+    }
+    public void clearWallet() {
+        this.currency = 0.0;
     }
 
 
