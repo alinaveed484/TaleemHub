@@ -27,14 +27,36 @@ public class Forum {
         this.commentRepo = commentRepo;
     }
 
-    public void createPost(Post post, Person person) {
-        post.setPerson(person); // Set the person who created the post
-        postRepo.save(post);
+    // Fetch all posts
+    public List<Post> getAllPosts() {
+        return postRepo.findAll();
     }
 
-    public void createComment(Comment comment, Person person, Post post) {
-        comment.setPerson(person); // Set the person who created the comment
-        comment.setPost(post); // Set the post for the comment
-        commentRepo.save(comment);
+    // Create a new post
+    public Post createPost(String title, String content, Person person) {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setCreated_at(LocalDateTime.now());
+        post.setPerson(person);
+        return postRepo.save(post);
+    }
+
+    // Add a comment to a post
+    public Comment addCommentToPost(Integer postId, String content, Person person) {
+        Post post = postRepo.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        Comment comment = new Comment();
+        comment.setContent(content);
+        comment.setCreated_at(LocalDateTime.now());
+        comment.setPost(post);
+        comment.setPerson(person);
+        return commentRepo.save(comment);
+    }
+
+    // Upvote a comment
+    public Comment upvoteComment(Integer commentId) {
+        Comment comment = commentRepo.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
+        comment.setVoteCount(comment.getVoteCount() + 1);  // Increase the vote count by 1
+        return commentRepo.save(comment);
     }
 }
