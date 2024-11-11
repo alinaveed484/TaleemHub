@@ -10,10 +10,19 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer postId;
-
-    private String title;
     private String content;
     private LocalDateTime created_at;
+    private String title;
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;  // One Post can have multiple comments
@@ -21,6 +30,30 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "person_id")
     private Person person;  // Each Post is linked to a Person (Student/Teacher)
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Integer getPostId() {
+        return postId;
+    }
 
     public void setPerson(Person person) {
         this.person = person;

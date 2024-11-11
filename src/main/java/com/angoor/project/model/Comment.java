@@ -11,6 +11,7 @@ public class Comment {
     private Integer comment_id;
     private String content;
     private LocalDateTime created_at;
+    private Integer voteCount = 0;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -23,8 +24,19 @@ public class Comment {
     public void setPerson(Person person) {
         this.person = person;
     }
-
     public void setPost(Post post) {
         this.post = post;
+    }
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
+    }
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
     }
 }
