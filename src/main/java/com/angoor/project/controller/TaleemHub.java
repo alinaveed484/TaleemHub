@@ -3,6 +3,7 @@ package com.angoor.project.controller;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.PersonDTO;
 import com.angoor.project.model.Teacher;
+import com.angoor.project.model.resource_category;
 import com.angoor.project.repository.CommentRepo;
 import com.angoor.project.repository.PostRepo;
 import com.angoor.project.repository.StudentRepository;
@@ -15,6 +16,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +81,28 @@ public class TaleemHub {
 
         return response;
     }
-
+    
+    @GetMapping("/resource/share_resource/get_resource_categories")
+    public Map<String, Object> shareResource_getResourceCategories(){
+    	Map<String, Object> response = new HashMap<>();
+    	
+    	response = resourceService.getResourceCategories();
+    	
+    	return response;
+    }
+    
+    @PostMapping("/resource/share_resource/share_resources")
+    public ResponseEntity<String>shareResource_shareResources(
+    		 @RequestParam("file") MultipartFile file,           // The file parameter
+             @RequestParam("title") String title,                // Other resource details
+             @RequestParam("category") resource_category category,
+             @RequestParam("uploader_id") Integer uploaderId){
+    	
+    	
+    	return resourceService.uploadResource(file, title, category, uploaderId);
+    	
+    }
+    
     // Chat Functionalities
 
     @MessageMapping("/user.addUser")
