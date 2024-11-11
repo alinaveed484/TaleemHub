@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.angoor.project.model.Wallet;
 
-
-public interface WalletRepo{
+@Repository
+public interface WalletRepo extends JpaRepository<Wallet, Integer> {
 
 }

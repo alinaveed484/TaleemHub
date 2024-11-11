@@ -2,6 +2,7 @@ package com.angoor.project.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -53,6 +54,12 @@ public abstract class Person {
     
     @OneToMany(mappedBy = "uploader")
     private List<Resource> resources;  // A person can have multiple comments
+
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Payment> payments = new ArrayList<>();
+
+    @Column(unique = true)
+    private String iban; // IBAN field which may or may not be set
 
     public void setId(Integer id) {
         this.id = id;
@@ -131,5 +138,11 @@ public abstract class Person {
     }
     public Wallet getWallet() {
         return wallet;
+    }
+    public String getIban() {
+        return iban;
+    }
+    public void setIban(String iban) {
+        this.iban = iban;
     }
 }
