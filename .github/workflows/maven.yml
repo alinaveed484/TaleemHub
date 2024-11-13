@@ -43,3 +43,4 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean verify --file pom.xml
+        working-directory: ./BackEnd
