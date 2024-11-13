@@ -1,7 +1,6 @@
 package com.angoor.project.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.annotations.DialectOverride;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.*;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

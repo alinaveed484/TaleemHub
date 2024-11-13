@@ -1,24 +1,21 @@
 package com.angoor.project.service;
 
-import com.angoor.project.model.*;
-import com.angoor.project.repository.*;
+import com.angoor.project.model.Person;
+import com.angoor.project.model.PersonDTO;
+import com.angoor.project.model.Student;
+import com.angoor.project.model.Teacher;
+import com.angoor.project.repository.PersonRepo;
+import com.angoor.project.repository.StudentRepository;
+import com.angoor.project.repository.TeacherRepository;
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-
-import com.angoor.project.model.Student;
-import com.angoor.project.model.Teacher;
-import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
-import org.apache.logging.log4j.CloseableThreadContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 public class MentorshipManager {

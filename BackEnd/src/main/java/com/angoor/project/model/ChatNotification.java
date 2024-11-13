@@ -1,8 +1,5 @@
 package com.angoor.project.model;
 
-import org.springframework.messaging.handler.annotation.Payload;
-
-
 public class ChatNotification {
     private Integer id;
     private Integer senderId;

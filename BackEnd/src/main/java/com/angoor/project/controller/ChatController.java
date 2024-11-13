@@ -1,21 +1,16 @@
 package com.angoor.project.controller;
 
-import com.angoor.project.model.Chat;
 import com.angoor.project.model.ChatNotification;
 import com.angoor.project.model.Message;
-import com.angoor.project.model.Person;
 import com.angoor.project.repository.ChatRepo;
 import com.angoor.project.repository.MessageRepo;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.service.ChatHub;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

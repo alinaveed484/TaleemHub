@@ -3,11 +3,12 @@ package com.angoor.project.service;
 import com.angoor.project.model.Chat;
 import com.angoor.project.model.Message;
 import com.angoor.project.model.Person;
-import com.angoor.project.repository.*;
+import com.angoor.project.repository.ChatRepo;
+import com.angoor.project.repository.MessageRepo;
+import com.angoor.project.repository.PersonRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

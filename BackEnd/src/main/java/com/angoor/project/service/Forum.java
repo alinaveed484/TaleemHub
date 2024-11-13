@@ -3,14 +3,15 @@ package com.angoor.project.service;
 import com.angoor.project.model.Comment;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.Post;
-import com.angoor.project.repository.*;
+import com.angoor.project.repository.CommentRepo;
+import com.angoor.project.repository.PersonRepo;
+import com.angoor.project.repository.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class Forum {

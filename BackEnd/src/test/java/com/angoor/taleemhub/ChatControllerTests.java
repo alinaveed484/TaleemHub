@@ -1,16 +1,9 @@
 package com.angoor.taleemhub;
 
 import com.angoor.project.controller.ChatController;
-import com.angoor.project.model.Chat;
-import com.angoor.project.model.Message;
-import com.angoor.project.model.MessageType;
-import com.angoor.project.model.Person;
-import com.angoor.project.model.Student;
-import com.angoor.project.model.Teacher;
+import com.angoor.project.model.*;
 import com.angoor.project.service.ChatHub;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,9 +11,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 class ChatControllerTest {
 

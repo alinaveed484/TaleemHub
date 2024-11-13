@@ -1,9 +1,8 @@
 package com.angoor.project.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Chat")

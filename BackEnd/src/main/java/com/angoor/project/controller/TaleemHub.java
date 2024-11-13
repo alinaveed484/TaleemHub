@@ -2,17 +2,14 @@ package com.angoor.project.controller;
 
 import com.angoor.project.model.Person;
 import com.angoor.project.model.PersonDTO;
-import com.angoor.project.model.Teacher;
-import com.angoor.project.repository.*;
 import com.angoor.project.model.resource_category;
 import com.angoor.project.repository.CommentRepo;
+import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.PostRepo;
-import com.angoor.project.repository.StudentRepository;
-import com.angoor.project.repository.TeacherRepository;
-import com.angoor.project.service.*;
-import jakarta.transaction.Transactional;
+import com.angoor.project.service.Forum;
+import com.angoor.project.service.MentorshipManager;
+import com.angoor.project.service.ResourceHub;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
