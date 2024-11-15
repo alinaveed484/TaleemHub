@@ -2,8 +2,6 @@ package com.angoor.project.model;
 
 import jakarta.persistence.*;
 
-
-
 @Entity
 @Table(name = "resource")
 public class Resource {
