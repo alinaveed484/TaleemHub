@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Available Mentors</title>
+</head>
+<body>
+<h1>Available Mentors for Subject: <span th:text="${subject}"></span></h1>
+<div>
+    <ul>
+        <li th:each="teacher : ${teachers}">
+            <!-- Display teacher's full name -->
+            <span th:text="${teacher.firstName + ' ' + teacher.lastName}"></span><br>
+            <!-- Display teacher's profile photo -->
+            <img th:src="${teacher.profilePhotoURL}" alt="Teacher Profile Photo" width="100px" height="100px"><br>
+            <!-- Display teacher's years of experience -->
+            <span>Experience: <span th:text="${teacher.yearsExperience}"></span> years</span><br>
+            <!-- Display teacher's qualification -->
+            <span>Qualification: <span th:text="${teacher.qualification}"></span></span><br>
+            <!-- Display teacher's hire date -->
+            <span>Hire Date: <span th:text="${teacher.hireDate}"></span></span><br>
+            <!-- Display teacher's subject specialization -->
+            <span>Specialization: <span th:text="${teacher.subjectSpecialization}"></span></span><br>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

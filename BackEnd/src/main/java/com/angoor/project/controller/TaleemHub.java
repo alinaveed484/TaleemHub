@@ -1,5 +1,6 @@
 package com.angoor.project.controller;
 
+import com.angoor.project.dto.TeacherDto;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.PersonDTO;
 import com.angoor.project.model.resource_category;
@@ -14,14 +15,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@RestController
+@Controller
 public class TaleemHub {
 	//main controller
 	//private final ChatHub chatService;
@@ -47,24 +51,26 @@ public class TaleemHub {
 
 
     @GetMapping("/hello")
+    @ResponseBody
     public Map<String, Object> sayHello() {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Hello, World!");
         return response;
     }
-    
+
     @GetMapping("/student/select_mentor/display_teachers")
-    public Map<String, Object> selectMentor_displayTeachers(@RequestParam String subject) {
-        Map<String, Object> response = new HashMap<>();
-        
-        response = managementService.displayTeachers(subject);
-        //the map will only contain name and subject of all teachers.
-        
-        return response;
+    public String selectMentor_displayTeachers(@RequestParam String subject, Model model) {
+        List<TeacherDto> teachers = managementService.displayTeachers(subject);
+        model.addAttribute("teachers", teachers); // Add the list of TeacherDTOs to the model
+        model.addAttribute("subject", subject);    // Add the subject to the model for display
+        return "displayTeachers";  // Name of the Thymeleaf template
     }
-    
-    
+
+
+
+
     @GetMapping("/student/select_mentor/show_teacher_details")
+    @ResponseBody
     public Map<String, Object> selectMentor_showTeacherDetails(@RequestParam Integer teacherID) {
         Map<String, Object> response = new HashMap<>();
         
@@ -75,6 +81,7 @@ public class TaleemHub {
     }
     
     @GetMapping("/student/select_mentor/send_mentor_request")
+    @ResponseBody
     public Map<String, Object> selectMentor_sendMentorRequest(@RequestParam Integer teacherID, @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
         response = managementService.sendMentorRequest(teacherID,studentID);
@@ -84,6 +91,7 @@ public class TaleemHub {
     }
     
     @GetMapping("/resource/share_resource/get_resource_categories")
+    @ResponseBody
     public Map<String, Object> shareResource_getResourceCategories(){
     	Map<String, Object> response = new HashMap<>();
 
