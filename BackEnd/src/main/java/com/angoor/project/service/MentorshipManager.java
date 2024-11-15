@@ -1,5 +1,6 @@
 package com.angoor.project.service;
 
+import com.angoor.project.dto.TeacherDto;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.PersonDTO;
 import com.angoor.project.model.Student;
