@@ -26,6 +26,10 @@ public abstract class Person {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet wallet;
+    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "calendar_token_id", referencedColumnName = "id")
+    private CalendarToken calendartoken;
 
     // Constructor
     public Person() {
@@ -145,4 +149,10 @@ public abstract class Person {
     public void setIban(String iban) {
         this.iban = iban;
     }
+	public CalendarToken getCalendartoken() {
+		return calendartoken;
+	}
+	public void setCalendartoken(CalendarToken calendartoken) {
+		this.calendartoken = calendartoken;
+	}
 }

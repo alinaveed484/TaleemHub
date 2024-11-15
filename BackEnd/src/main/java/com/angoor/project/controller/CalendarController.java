@@ -2,8 +2,10 @@ package com.angoor.project.controller;
 
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
+import com.angoor.project.service.CalendarService;
 
 
 
@@ -30,9 +34,18 @@ public class CalendarController {
     @Value("${google.redirect.uri}")
     private String redirectUri;
     
+    private Integer personID;
+    
+    private final CalendarService calendarService;
+    
+    @Autowired
+    public CalendarController(CalendarService calendarService) {
+    	this.calendarService = calendarService;
+    }
     
     @GetMapping("/auth/googleCalender")
-    public ResponseEntity<Void> redirectToGoogle() {
+    public ResponseEntity<Void> redirectToGoogle(@RequestParam Integer personID) {
+    	this.personID = personID;
         String authorizationUri = "https://accounts.google.com/o/oauth2/auth?" +
                                   "client_id=" + clientId +
                                   "&redirect_uri=" + redirectUri +
@@ -66,11 +79,18 @@ public class CalendarController {
         Map<String, Object> tokens = response.getBody();
         String accessToken = (String) tokens.get("access_token");
         String refreshToken = (String) tokens.get("refresh_token");
+        Integer expiresIn = (Integer) tokens.get("expires_in");  // expires_in is typically an Integer
+
+        // If you want to calculate the expiration time as LocalDateTime
+        LocalDateTime expirationTime = LocalDateTime.now().plusSeconds(expiresIn);
 
         // Store tokens securely for the user
         // ... (e.g., save to database)
-
-        return ResponseEntity.ok("Access Token: " + accessToken + " Refresh Token: " + refreshToken);
+        boolean worked = calendarService.saveTokens(personID,accessToken,refreshToken,expirationTime);
+        if(worked)
+        	return ResponseEntity.ok("Done!");
+        else
+        	return ResponseEntity.ok("There was some problem!");
     }
     
 }
