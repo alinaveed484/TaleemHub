@@ -76,16 +76,26 @@ public class MentorshipManager {
 			teacherRepository.save(teacher);
 		}
 	}
-    
-    public Map<String, Object> displayTeachers(String subject){
-    	Map<String, Object> response = new HashMap<>();
-    	for(Teacher t: teachersInMemory) {
-    		if(subject.equals(t.getSubjectSpecialization())){
-    			response.put(t.getFirstName()+t.getLastName(), t.getProfilePhotoURL());
-    		}
-    	}
-    	return response;
-    }
+
+	public List<TeacherDto> displayTeachers(String subject) {
+		List<TeacherDto> response = new ArrayList<>();
+		for (Teacher t : teachersInMemory) {
+			if (subject.equals(t.getSubjectSpecialization())) {
+				TeacherDto teacherDTO = new TeacherDto(
+						t.getFirstName(),
+						t.getLastName(),
+						t.getProfilePhotoURL(),
+						t.getYearsExperience(),
+						t.getHireDate(),
+						t.getSubjectSpecialization(),
+						t.getQualification()
+				);
+				response.add(teacherDTO);
+			}
+		}
+		return response;
+	}
+
 
 	public Map<String, Object> showTeacherDetails(Integer teacherID) {
 		Map<String, Object> response = new HashMap<>();
