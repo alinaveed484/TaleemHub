@@ -21,10 +21,10 @@ public class Teacher extends Person{
     private Qualification qualification;
 
 
-    @ManyToMany(mappedBy = "teachers", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "teachers", fetch = FetchType.LAZY)
     private Set<Student> students = new HashSet<>();
     
-    @ManyToMany(mappedBy = "teacherRequests", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "teacherRequests", fetch = FetchType.LAZY)
     private Set<Student> studentRequests = new HashSet<>();
 
 

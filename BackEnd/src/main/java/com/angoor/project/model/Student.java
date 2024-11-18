@@ -12,7 +12,7 @@ public class Student extends Person {
     private Integer gradeLevel;
     private LocalDate enrollmentDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "Student_Teacher",
             joinColumns = @JoinColumn(name = "studentId"),
@@ -21,7 +21,7 @@ public class Student extends Person {
     private Set<Teacher> teachers = new HashSet<>();
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "Student_Teacher_Request",
             joinColumns = @JoinColumn(name = "studentId"),
@@ -38,6 +38,9 @@ public class Student extends Person {
     }
     public Integer getGradeLevel() {
         return gradeLevel;
+    }
+    public String getPersonType() {
+        return "Student";
     }
     public LocalDate getEnrollmentDate() {
         return enrollmentDate;

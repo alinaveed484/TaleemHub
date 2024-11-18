@@ -112,26 +112,60 @@ public class TaleemHub {
 
     }
 
+    @GetMapping("/teacher/accept_student/display_students")
+    public Map<String, Object> acceptStudents_displayStudents(@RequestParam Integer teacherId) {
+        Map<String, Object> response = new HashMap<>();
+
+        response = managementService.displayStudents(teacherId);
+        //the map will only contain name and subject of all teachers.
+
+        return response;
+    }
+
+    @GetMapping("/teacher/accept_student/show_student_request")
+    public Map<String, Object> acceptStudent_showStudentRequest(@RequestParam Integer teacherID,
+                                                                @RequestParam Integer studentID) {
+        Map<String, Object> response = new HashMap<>();
+
+        response = managementService.showStudentRequest(teacherID, studentID);
+        //this map will contain all the details of the single teacher.
+
+        return response;
+    }
+
+    @GetMapping("/teacher/accept_student/accept_student")
+    public Map<String, Object> acceptStudent_acceptStudent(@RequestParam Integer teacherID,
+                                                           @RequestParam Integer studentID) {
+        Map<String, Object> response = new HashMap<>();
+
+        response = managementService.acceptStudent(studentID, teacherID);
+        //this map will contain all the details of the single teacher.
+
+        return response;
+    }
+
+
+
     // Chat Functionalities
 
     @MessageMapping("/user.addUser")
     @SendTo("/user/topic")
-    public Person connect(@Payload Person person){
-        managementService.connect(person);
-        return person;
+    public PersonDTO connect(@Payload PersonDTO personDTO){
+        managementService.connect(personDTO);
+        return personDTO;
     }
 
     @MessageMapping ("/user.disconnectUser")
     @SendTo("/user/topic")
-    public Person disconnect(@Payload Person person) {
-        managementService.disconnect(person);
-        return person;
+    public PersonDTO disconnect(@Payload PersonDTO personDTO) {
+        managementService.disconnect(personDTO);
+        return personDTO;
     }
 
-    @PostMapping("/users")
+    @GetMapping("/users")
     @CrossOrigin(origins = "http://localhost:3000") // Allow requests from frontend origin
-    public ResponseEntity<Set<PersonDTO>> displayConnectedUsers(@RequestBody Person person) {
-        Set<PersonDTO> connectedUsers = managementService.getConnectedUsersDTO(person);
+    public ResponseEntity<Set<PersonDTO>> displayConnectedUsers(@RequestParam Integer personID, @RequestParam String person_type) {
+        Set<PersonDTO> connectedUsers = managementService.getConnectedUsersDTO(personID, person_type);
         return ResponseEntity.ok(connectedUsers);
     }
 

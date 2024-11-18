@@ -4,16 +4,27 @@ public class PersonDTO {
     private Integer id;
     private String firstName;
     private String lastName;
+    private boolean status;
+    private String type;
 
     public boolean isStatus() {
         return status;
     }
 
-    public PersonDTO(Integer id, String firstName, String lastName, boolean status) {
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public PersonDTO(Integer id, String firstName, String lastName, boolean status, String type) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
+        this.type = type;
     }
 
     public void setId(Integer id) {
@@ -44,7 +55,7 @@ public class PersonDTO {
         return id;
     }
 
-    private boolean status;
+
 
     // getters and setters
 }
