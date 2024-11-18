@@ -26,7 +26,7 @@ public abstract class Person {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet wallet;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "calendar_token_id", referencedColumnName = "id")
     private CalendarToken calendartoken;
@@ -43,6 +43,35 @@ public abstract class Person {
     // One Person as a Student can have multiple Chat instances
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chat> chatsAsStudent;
+
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messagesSent;

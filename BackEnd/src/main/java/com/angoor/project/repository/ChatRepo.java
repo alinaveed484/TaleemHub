@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ChatRepo extends JpaRepository<Chat, Integer> {
-    Optional<Chat> findByTeacherAndStudent(Person teacher, Person student);
+    Optional<Chat> findByTeacher_idAndStudent_id(Integer teacher_id, Integer student_id);
 }

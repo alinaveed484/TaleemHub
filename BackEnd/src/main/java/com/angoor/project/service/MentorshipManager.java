@@ -10,6 +10,8 @@ import com.angoor.project.repository.StudentRepository;
 import com.angoor.project.repository.TeacherRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.CloseableThreadContext;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -60,23 +62,7 @@ public class MentorshipManager {
         teacherRepository.save(teacher);
     }
 
-	public void assignTeacherToStudent(Integer studentId, Integer teacherId) {
-		// Find student and teacher using their IDs
-		Student student = studentRepository.findById(studentId).orElse(null);
-		Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
 
-		if (student != null && teacher != null) {
-			// Add the teacher to the student's list of teachers
-			student.getTeachers().add(teacher);
-
-			// Add the student to the teacher's list of students
-			teacher.getStudents().add(student);
-
-			// Save both the student and the teacher to the database (JPA handles the ManyToMany association)
-			studentRepository.save(student);
-			teacherRepository.save(teacher);
-		}
-	}
 
 	public List<TeacherDto> displayTeachers(String subject) {
 		List<TeacherDto> response = new ArrayList<>();
@@ -96,6 +82,8 @@ public class MentorshipManager {
 		}
 		return response;
 	}
+
+
 
 
 	public Map<String, Object> showTeacherDetails(Integer teacherID) {
@@ -155,18 +143,20 @@ public class MentorshipManager {
 
 	@MessageMapping("/user.addUser")
 	@SendTo("/user/topic")
-	public void connect(Person person){
-		person.setStatus(true);
-		Person p = personRepo.findById(person.getId()).orElse(null);
-
-		if (p != null) {
-			if (p instanceof Student) {
-				Student s = (Student) p;
+	public void connect(PersonDTO personDTO){
+		if (personDTO.getType().equals("Student"))
+		{
+			Student s = studentRepository.findById(personDTO.getId()).orElse(null);
+			if (s != null)
+			{
 				s.setStatus(true);
 				studentRepository.save(s);
 			}
-			else if (p instanceof Teacher) {
-				Teacher t = (Teacher) p;
+		}
+		else{
+			Teacher t = teacherRepository.findById(personDTO.getId()).orElse(null);
+			if (t != null)
+			{
 				t.setStatus(true);
 				teacherRepository.save(t);
 			}
@@ -177,61 +167,172 @@ public class MentorshipManager {
 
 	@MessageMapping("/user.addUser")
 	@SendTo("/user/topic")
-	public void disconnect(Person person){
-		var p = personRepo.findById(person.getId()).orElse(null);
+	public void disconnect(PersonDTO personDTO){
 
-		if (p != null){
-			p.setStatus(false);
-			personRepo.save(p);
+		if (personDTO.getType().equals("Teacher"))
+		{
+			Student s = studentRepository.findById(personDTO.getId()).orElse(null);
+			if (s != null) {
+				s.setStatus(false);
+				studentRepository.save(s);
+			}
+		}
+		else{
+			Teacher t = teacherRepository.findById(personDTO.getId()).orElse(null);
+			if (t != null) {
+				t.setStatus(false);
+				teacherRepository.save(t);
+			}
 		}
 
 	}
 
-	// implement this after discussing with Ali
-	// in case of student, this function will return a list of his registered teachers
-	// in case of teacher, this function will return a list of his registered students
-//	public Set<Person> displayConnectedUsers(Person person) {
-//		if (person instanceof Student) {
-//			Student student = (Student) person;
-//			return new HashSet<>(student.getTeachers()); // returns Set<Teacher>
-//		} else if (person instanceof Teacher) {
-//			Teacher teacher = (Teacher) person;
-//			return new HashSet<>(teacher.getStudents()); // returns Set<Student>
-//		}
-//		return Collections.emptySet();
-//	}
 
-	public Set<PersonDTO> getConnectedUsersDTO(Person person) {
+
+	public Set<PersonDTO> getConnectedUsersDTO(Integer personID, String person_type) {
 		// Get connected users (students for a teacher, teachers for a student)
-		Set<Person> connectedUsers = displayConnectedUsers(person);
+		Set<PersonDTO> connectedUsers = displayConnectedUsers(personID, person_type);
 
 		// Convert each Person to PersonDTO and collect into a set
-		return connectedUsers.stream()
-				.map(this::convertToDTO)
-				.collect(Collectors.toSet());
+		return connectedUsers;
 	}
 
 	private PersonDTO convertToDTO(Person person) {
+		String type = (person.getId() != null) ? teacherRepository.findPersonTypeById(person.getId()) : null;
 		return new PersonDTO(
 				person.getId(),
 				person.getFirstName(),
 				person.getLastName(),
-				person.getStatus()
+				person.getStatus(),
+				type
 		);
 	}
 
-	public Set<Person> displayConnectedUsers(Person person) {
-		if (person instanceof Student) {
-			Student student = (Student) person;
-			return new HashSet<>(student.getTeachers()); // Return Set<Teacher>
-		} else if (person instanceof Teacher) {
-			Teacher teacher = (Teacher) person;
-			return new HashSet<>(teacher.getStudents()); // Return Set<Student>
+	public Set<PersonDTO> displayConnectedUsers(Integer personID, String person_type) {
+
+		if ("Student".equals(person_type)) {
+			Student student = studentRepository.findById(personID).orElse(null);
+			if (student != null) {
+				// Map each Teacher to a PersonDTO
+				return student.getTeachers().stream()
+						.map(teacher -> new PersonDTO(
+								teacher.getId(),
+								teacher.getFirstName(),
+								teacher.getLastName(),
+								teacher.isStatus(),
+								"Teacher" // Assuming getPersonType() returns "Teacher"
+						))
+						.collect(Collectors.toSet());
+			}
 		}
-		return new HashSet<>(); // Return empty set if person type is unrecognized
+
+		if ("Teacher".equals(person_type)) {
+			Teacher teacher = teacherRepository.findById(personID).orElse(null);
+			if (teacher != null) {
+				// Map each Student to a PersonDTO
+				return teacher.getStudents().stream()
+						.map(student -> new PersonDTO(
+								student.getId(),
+								student.getFirstName(),
+								student.getLastName(),
+								student.isStatus(),
+								"Student" // Assuming getPersonType() returns "Student"
+						))
+						.collect(Collectors.toSet());
+			}
+		}
+
+		return Collections.emptySet(); // Return empty set if person type is unrecognized or person not found
 	}
 
 
 
+	@Transactional
+	public Map<String, Object> displayStudents(Integer teacherId) {
+		Map<String, Object> response = new HashMap<>();
+		Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
+
+		if (teacher != null) {
+			// Initialize the lazy-loaded studentRequests collection
+			Hibernate.initialize(teacher.getStudentRequests());
+
+			// Convert the Set<Student> to a Map where student ID is the key and PersonDTO is the value
+			Map<Integer, PersonDTO> studentDTOMap = teacher.getStudentRequests().stream()
+					.map(student -> new PersonDTO(
+							student.getId(),
+							student.getFirstName(),
+							student.getLastName(),
+							student.isStatus(),
+							student.getPersonType()
+					))
+					.collect(Collectors.toMap(PersonDTO::getId, dto -> dto));
+
+			response.put("students", studentDTOMap);
+		} else {
+			response.put("error", "Teacher not found");
+		}
+
+		return response;
+	}
+
+	public Map<String, Object> showStudentRequest(Integer teacherID, Integer studentID) {
+		Map<String, Object> response = new HashMap<>();
+
+		Teacher teacher = teacherRepository.findById(teacherID).orElse(null);
+
+		if (teacher != null) {
+			Set<Student> students = teacher.getStudentRequests();
+
+			// Find the student with the matching ID and convert to PersonDTO
+			PersonDTO matchingStudentDTO = students.stream()
+					.filter(student -> student.getId().equals(studentID))
+					.map(student -> new PersonDTO(
+							student.getId(),
+							student.getFirstName(),
+							student.getLastName(),
+							student.isStatus(),
+							student.getPersonType()
+					))
+					.findFirst()
+					.orElse(null);
+
+			if (matchingStudentDTO != null) {
+				response.put("student", matchingStudentDTO);
+			} else {
+				response.put("error", "Student with the specified ID not found in teacher's requests");
+			}
+		} else {
+			response.put("error", "Teacher not found");
+		}
+
+		return response;
+	}
+
+	public Map<String, Object> acceptStudent(Integer teacherID, Integer studentID) {
+		Map<String, Object> response = new HashMap<>();
+
+		assignTeacherToStudent(teacherID, studentID);
+
+		response.put("value", "Success!");
+		return response;
+	}
+
+	public void assignTeacherToStudent(Integer studentId, Integer teacherId) {
+		// Find student and teacher using their IDs
+		Student student = studentRepository.findById(studentId).orElse(null);
+		Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
+
+		if (student != null && teacher != null) {
+			// Add the teacher to the student's list of teachers
+			student.getTeachers().add(teacher);
+
+			// Add the student to the teacher's list of students
+			teacher.getStudents().add(student);
+
+			// Save both the student and the teacher to the database (JPA handles the ManyToMany association)
+			studentRepository.save(student);
+			teacherRepository.save(teacher);
+		}
+	}
 }
 
