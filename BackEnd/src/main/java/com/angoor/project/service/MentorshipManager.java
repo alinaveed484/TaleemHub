@@ -62,23 +62,7 @@ public class MentorshipManager {
         teacherRepository.save(teacher);
     }
 
-	public void assignTeacherToStudent(Integer studentId, Integer teacherId) {
-		// Find student and teacher using their IDs
-		Student student = studentRepository.findById(studentId).orElse(null);
-		Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
 
-		if (student != null && teacher != null) {
-			// Add the teacher to the student's list of teachers
-			student.getTeachers().add(teacher);
-
-			// Add the student to the teacher's list of students
-			teacher.getStudents().add(student);
-
-			// Save both the student and the teacher to the database (JPA handles the ManyToMany association)
-			studentRepository.save(student);
-			teacherRepository.save(teacher);
-		}
-	}
 
 	public List<TeacherDto> displayTeachers(String subject) {
 		List<TeacherDto> response = new ArrayList<>();
@@ -99,15 +83,7 @@ public class MentorshipManager {
 		return response;
 	}
 
-    public Map<String, Object> displayTeachers(String subject){
-    	Map<String, Object> response = new HashMap<>();
-    	for(Teacher t: teachersInMemory) {
-    		if(subject.equals(t.getSubjectSpecialization())){
-    			response.put(t.getFirstName()+t.getLastName(), t.getProfilePhotoURL());
-    		}
-    	}
-    	return response;
-    }
+
 
 
 	public Map<String, Object> showTeacherDetails(Integer teacherID) {
@@ -211,19 +187,7 @@ public class MentorshipManager {
 
 	}
 
-	// implement this after discussing with Ali
-	// in case of student, this function will return a list of his registered teachers
-	// in case of teacher, this function will return a list of his registered students
-//	public Set<Person> displayConnectedUsers(Person person) {
-//		if (person instanceof Student) {
-//			Student student = (Student) person;
-//			return new HashSet<>(student.getTeachers()); // returns Set<Teacher>
-//		} else if (person instanceof Teacher) {
-//			Teacher teacher = (Teacher) person;
-//			return new HashSet<>(teacher.getStudents()); // returns Set<Student>
-//		}
-//		return Collections.emptySet();
-//	}
+
 
 	public Set<PersonDTO> getConnectedUsersDTO(Integer personID, String person_type) {
 		// Get connected users (students for a teacher, teachers for a student)

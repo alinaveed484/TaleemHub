@@ -2,6 +2,7 @@ package com.angoor.project.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -77,12 +78,6 @@ public abstract class Person {
 
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messagesReceived;
-
-
-    // Constructor
-    public Person() {
-        this.wallet = new Wallet(); // Initialize the wallet
-    }
 
     @OneToMany(mappedBy = "person")
     private List<Post> posts;  // A person can have multiple posts
