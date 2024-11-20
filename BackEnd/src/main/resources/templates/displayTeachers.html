@@ -2,6 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Available Mentors</title>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script src="/static/scripts/user.js" type="text/javascript"></script>
 </head>
 <body>
 <h1>Available Mentors for Subject: <span th:text="${subject}"></span></h1>
@@ -23,5 +27,8 @@
         </li>
     </ul>
 </div>
+<div id="sign-in-status"></div>
+<div id="sign-in"></div>
+<pre id="account-details"></pre>
 </body>
 </html>
