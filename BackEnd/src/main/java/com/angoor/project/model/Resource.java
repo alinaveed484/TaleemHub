@@ -24,7 +24,23 @@ public class Resource {
 	@Column(name = "resource_url", nullable = false)
 	private String resourceUrl;
 	
-    public Resource(Integer resourceID,String title, Person uploader, resource_category resourceCategory,String resourceUrl) {
+	@Column(name = "subject" , nullable = false)
+	private resource_subject subject;
+	
+	@Column(name = "description")
+	private String description;
+	
+	
+    public Resource(String title, Person uploader, resource_category resourceCategory,
+			String resourceUrl, resource_subject subject, String description) {
+		this.title = title;
+		this.uploader = uploader;
+		this.resourceCategory = resourceCategory;
+		this.resourceUrl = resourceUrl;
+		this.subject = subject;
+		this.description = description;
+	}
+	public Resource(Integer resourceID,String title, Person uploader, resource_category resourceCategory,String resourceUrl) {
         this.resourceID = resourceID;
         this.title = title;
         this.uploader = uploader;

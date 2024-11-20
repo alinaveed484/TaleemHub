@@ -4,6 +4,7 @@ import com.angoor.project.dto.TeacherDto;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.PersonDTO;
 import com.angoor.project.model.resource_category;
+import com.angoor.project.model.resource_subject;
 import com.angoor.project.repository.CommentRepo;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.PostRepo;
@@ -59,7 +60,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/student/select_mentor/display_teachers")
-    public String selectMentor_displayTeachers(@RequestParam String subject, Model model) {
+    public String selectMentor_displayTeachers(@RequestParam(required = false) String subject, Model model) {
         List<TeacherDto> teachers = managementService.displayTeachers(subject);
         model.addAttribute("teachers", teachers); // Add the list of TeacherDTOs to the model
         model.addAttribute("subject", subject);    // Add the subject to the model for display
@@ -90,6 +91,8 @@ public class TaleemHub {
         return response;
     }
     
+    
+    //---------------
     @GetMapping("/resource/share_resource/get_resource_categories")
     @ResponseBody
     public Map<String, Object> shareResource_getResourceCategories(){
@@ -99,19 +102,39 @@ public class TaleemHub {
 
     	return response;
     }
-
+    @GetMapping("/resource/upload") //shows the resource uploading page
+    public String showUploadForm(Model model) {
+        model.addAttribute("subjects", resource_subject.values());
+        model.addAttribute("categories", resource_category.values());
+        return "resource-upload";
+    }
+    
     @PostMapping("/resource/share_resource/share_resources")
     public ResponseEntity<String>shareResource_shareResources(
     		 @RequestParam("file") MultipartFile file,           // The file parameter
              @RequestParam("title") String title,                // Other resource details
              @RequestParam("category") resource_category category,
-             @RequestParam("uploader_id") Integer uploaderId){
+             @RequestParam("uploader_id") Integer uploaderId,
+             @RequestParam("subject") resource_subject subject,
+             @RequestParam("description") String description){
 
 
-    	return resourceService.uploadResource(file, title, category, uploaderId);
+    	return resourceService.uploadResource(file, title, category, uploaderId,subject,description);
 
     }
 
+    // Viewing resources
+    @GetMapping("/resources/view")
+    public String viewResources(@RequestParam(required = false) resource_subject subject, Model model) {
+       // List<Resource> resources = (subject == null) 
+         //       ? resourceService.getAllResources() 
+           //     : resourceService.getResourcesBySubject(subject);
+        //model.addAttribute("resources", resources);
+        model.addAttribute("subjects", resource_subject.values());
+        return "resources-view";
+    }
+    
+    
     @GetMapping("/teacher/accept_student/display_students")
     public Map<String, Object> acceptStudents_displayStudents(@RequestParam Integer teacherId) {
         Map<String, Object> response = new HashMap<>();

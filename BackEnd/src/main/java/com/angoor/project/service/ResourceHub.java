@@ -3,6 +3,7 @@ package com.angoor.project.service;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.Resource;
 import com.angoor.project.model.resource_category;
+import com.angoor.project.model.resource_subject;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.ResourceRepo;
 import jakarta.transaction.Transactional;
@@ -42,7 +43,7 @@ public class ResourceHub {
     }
     
     @Transactional 
-    public ResponseEntity<String> uploadResource(MultipartFile file, String title, resource_category category, Integer uploaderId){
+    public ResponseEntity<String> uploadResource(MultipartFile file, String title, resource_category category, Integer uploaderId, resource_subject subject, String description){
     	try {
     	    String fileName = file.getOriginalFilename();
     	    Path filePath = Paths.get(storagePath, fileName);
@@ -56,7 +57,7 @@ public class ResourceHub {
     	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person ID not found");
     	    }
     	    
-    	    Resource resource = new Resource(title, person, category, filePath.toString());
+    	    Resource resource = new Resource(title, person, category, filePath.toString(),subject,description);
     	    resource.setUploader(person);
     	    resourceRepository.save(resource);
     	    
