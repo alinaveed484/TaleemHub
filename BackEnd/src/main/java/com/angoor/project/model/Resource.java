@@ -24,6 +24,7 @@ public class Resource {
 	@Column(name = "resource_url", nullable = false)
 	private String resourceUrl;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "subject" , nullable = false)
 	private resource_subject subject;
 	
@@ -56,6 +57,18 @@ public class Resource {
     public Resource() {
     	
     }
+	public resource_subject getSubject() {
+		return subject;
+	}
+	public void setSubject(resource_subject subject) {
+		this.subject = subject;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public String getTitle() {
 		return title;
 	}

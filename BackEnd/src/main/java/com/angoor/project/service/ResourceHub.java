@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -40,6 +41,14 @@ public class ResourceHub {
     	response.put("3", "Document");
     	response.put("4", "Video");
     	return response;
+    }
+    
+    public List<Resource> getResourcesBySubject(resource_subject subject) {
+        return resourceRepository.findBySubject(subject);
+    }
+    
+    public List<Resource> getAllResources() {
+        return resourceRepository.findAll();
     }
     
     @Transactional 
@@ -68,6 +77,11 @@ public class ResourceHub {
     	}
         
 
+    }
+
+    // Get resource by ID
+    public Resource getResourceById(Integer resourceId) {
+        return resourceRepository.findById(resourceId).orElse(null);
     }
 
     
