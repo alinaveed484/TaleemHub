@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Resources</title>
+    <link rel="stylesheet" href="../css/resourcesStyle.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Resource Viewer</h1>
+        <button onclick="window.location.href='/resource/upload'">Upload a Resource</button>
+    </div>
+
+    <!-- Filter by Subject -->
+    <div class="filter-section">
+        <label for="subject">Filter by Subject:</label>
+        <select id="subject" onchange="filterResources()">
+            <option value="">All</option>
+            <option th:each="sub : ${subjects}" th:value="${sub}" th:text="${sub}"></option>
+        </select>
+    </div>
+
+
+
+	
+    <!-- List of Resources -->
+	<div class="resource-list-container">
+	    <div class="resource-list">
+	        <div class="resource-card" th:each="resource : ${resources}">
+	            <h3 th:text="${resource.title}"></h3>
+	            <p><strong>Category:</strong> <span th:text="${resource.resourceCategory}"></span></p>
+	            <p><strong>Subject:</strong> <span th:text="${resource.subject}"></span></p>
+	            <p><strong>Description:</strong> <span th:text="${resource.description}"></span></p>
+	            <p><strong>Uploader:</strong> <span th:text="${resource.uploader.firstName}"></span></p>
+	            <a th:href="'/resources/download/' + ${resource.resourceID}" class="download-btn">Download</a>
+	        </div>
+	    </div>
+	</div>
+
+    <script src="../js/resource-filter.js"></script>
+</body>
+</html>
