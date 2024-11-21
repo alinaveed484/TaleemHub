@@ -52,7 +52,7 @@ public class ResourceHub {
     }
     
     @Transactional 
-    public ResponseEntity<String> uploadResource(MultipartFile file, String title, resource_category category, Integer uploaderId, resource_subject subject, String description){
+    public ResponseEntity<String> uploadResource(MultipartFile file, String title, resource_category category, String uploaderId, resource_subject subject, String description){
     	try {
     	    String fileName = file.getOriginalFilename();
     	    Path filePath = Paths.get(storagePath, fileName);
@@ -61,7 +61,7 @@ public class ResourceHub {
     	    Files.createDirectories(Paths.get(storagePath)); 
     	    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-    	    Person person = personRepository.findById(uploaderId).orElse(null);
+    	    Person person = personRepository.findByUid(uploaderId).orElse(null);
     	    if(person == null) {
     	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person ID not found");
     	    }
