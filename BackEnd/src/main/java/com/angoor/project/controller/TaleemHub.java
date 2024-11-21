@@ -3,7 +3,9 @@ package com.angoor.project.controller;
 import com.angoor.project.dto.TeacherDto;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.PersonDTO;
+import com.angoor.project.model.Resource;
 import com.angoor.project.model.resource_category;
+import com.angoor.project.model.resource_subject;
 import com.angoor.project.repository.CommentRepo;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.PostRepo;
@@ -11,6 +13,10 @@ import com.angoor.project.service.Forum;
 import com.angoor.project.service.MentorshipManager;
 import com.angoor.project.service.ResourceHub;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,6 +26,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +69,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/student/select_mentor/display_teachers")
-    public String selectMentor_displayTeachers(@RequestParam String subject, Model model) {
+    public String selectMentor_displayTeachers(@RequestParam(required = false) String subject, Model model) {
         List<TeacherDto> teachers = managementService.displayTeachers(subject);
         model.addAttribute("teachers", teachers); // Add the list of TeacherDTOs to the model
         model.addAttribute("subject", subject);    // Add the subject to the model for display
@@ -88,6 +98,8 @@ public class TaleemHub {
         return response;
     }
     
+    
+    //---------------
     @GetMapping("/resource/share_resource/get_resource_categories")
     @ResponseBody
     public Map<String, Object> shareResource_getResourceCategories(){
@@ -97,19 +109,66 @@ public class TaleemHub {
 
     	return response;
     }
+    @GetMapping("/resource/upload") //shows the resource uploading page
+    public String showUploadForm(Model model) {
+        model.addAttribute("subjects", resource_subject.values());
+        model.addAttribute("categories", resource_category.values());
+        return "resource-upload";
+    }
+    
+    @PostMapping("/resource/upload")
+    public String shareResource_shareResources(
+            @RequestParam("file") MultipartFile file,           // The file parameter
+            @RequestParam("title") String title,                // Other resource details
+            @RequestParam("category") resource_category category,
+            @RequestParam("uploader_id") Integer uploaderId,
+            @RequestParam("subject") resource_subject subject,
+            @RequestParam("description") String description) {
 
-    @PostMapping("/resource/share_resource/share_resources")
-    public ResponseEntity<String>shareResource_shareResources(
-    		 @RequestParam("file") MultipartFile file,           // The file parameter
-             @RequestParam("title") String title,                // Other resource details
-             @RequestParam("category") resource_category category,
-             @RequestParam("uploader_id") Integer uploaderId){
-
-
-    	return resourceService.uploadResource(file, title, category, uploaderId);
-
+        resourceService.uploadResource(file, title, category, uploaderId, subject, description);
+        return "redirect:/resources/view"; // Redirect to the /resources/view endpoint
     }
 
+    // Viewing resources
+    @GetMapping("/resources/view")
+    public String viewResources(@RequestParam(required = false) resource_subject subject, Model model) {
+        List<Resource> resources = (subject == null)? resourceService.getAllResources() : resourceService.getResourcesBySubject(subject);
+        model.addAttribute("resources", resources);
+        model.addAttribute("subjects", resource_subject.values());
+        return "resources-view";
+    }
+    
+ // Download resource file
+    @GetMapping("resources/download/{resourceId}")
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Integer resourceId) {
+        // Retrieve the resource from the database
+        Resource resource = resourceService.getResourceById(resourceId);
+        
+        if (resource == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Resource not found
+        }
+
+        // Path to the file stored on the server
+        String filePath = resource.getResourceUrl();
+        Path file = Paths.get(filePath);
+
+        // Check if the file exists
+        if (!Files.exists(file)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // File not found
+        }
+
+        try {
+            // Set headers to indicate file download and its content type
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName().toString() + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new InputStreamResource(Files.newInputStream(file))); // Send the file as the response
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Error handling
+        }
+    }
+    //-------------------------------------------
+    
     @GetMapping("/teacher/accept_student/display_students")
     public Map<String, Object> acceptStudents_displayStudents(@RequestParam Integer teacherId) {
         Map<String, Object> response = new HashMap<>();

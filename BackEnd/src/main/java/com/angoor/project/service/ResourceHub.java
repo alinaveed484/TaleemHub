@@ -3,6 +3,7 @@ package com.angoor.project.service;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.Resource;
 import com.angoor.project.model.resource_category;
+import com.angoor.project.model.resource_subject;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.ResourceRepo;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -41,8 +43,16 @@ public class ResourceHub {
     	return response;
     }
     
+    public List<Resource> getResourcesBySubject(resource_subject subject) {
+        return resourceRepository.findBySubject(subject);
+    }
+    
+    public List<Resource> getAllResources() {
+        return resourceRepository.findAll();
+    }
+    
     @Transactional 
-    public ResponseEntity<String> uploadResource(MultipartFile file, String title, resource_category category, Integer uploaderId){
+    public ResponseEntity<String> uploadResource(MultipartFile file, String title, resource_category category, Integer uploaderId, resource_subject subject, String description){
     	try {
     	    String fileName = file.getOriginalFilename();
     	    Path filePath = Paths.get(storagePath, fileName);
@@ -56,7 +66,7 @@ public class ResourceHub {
     	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person ID not found");
     	    }
     	    
-    	    Resource resource = new Resource(title, person, category, filePath.toString());
+    	    Resource resource = new Resource(title, person, category, filePath.toString(),subject,description);
     	    resource.setUploader(person);
     	    resourceRepository.save(resource);
     	    
@@ -67,6 +77,11 @@ public class ResourceHub {
     	}
         
 
+    }
+
+    // Get resource by ID
+    public Resource getResourceById(Integer resourceId) {
+        return resourceRepository.findById(resourceId).orElse(null);
     }
 
     
