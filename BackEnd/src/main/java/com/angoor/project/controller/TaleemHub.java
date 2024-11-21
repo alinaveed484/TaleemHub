@@ -77,8 +77,6 @@ public class TaleemHub {
     }
 
 
-
-
     @GetMapping("/student/select_mentor/show_teacher_details")
     @ResponseBody
     public Map<String, Object> selectMentor_showTeacherDetails(@RequestParam Integer teacherID) {

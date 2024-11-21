@@ -19,6 +19,7 @@ public abstract class Person {
     private String email;
     private String phone;
     private String profilePhotoURL;
+    private String uid;
     private Integer points = 0;
     private boolean status = false;
 
@@ -184,4 +185,10 @@ public abstract class Person {
 	public void setCalendartoken(CalendarToken calendartoken) {
 		this.calendartoken = calendartoken;
 	}
+    public String getUid() {
+        return uid;
+    }
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }

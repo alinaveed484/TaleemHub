@@ -6,10 +6,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-enum Qualification {
-    Bachelors, Masters, PhD
-}
-
 @Entity
 @DiscriminatorValue("TEACHER")
 public class Teacher extends Person{
