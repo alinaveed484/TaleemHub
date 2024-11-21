@@ -69,7 +69,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/student/select_mentor/display_teachers")
-    public String selectMentor_displayTeachers(@RequestParam(required = false) String subject, Model model) {
+    public String selectMentor_displayTeachers(@RequestParam String subject, Model model) {
         List<TeacherDto> teachers = managementService.displayTeachers(subject);
         model.addAttribute("teachers", teachers); // Add the list of TeacherDTOs to the model
         model.addAttribute("subject", subject);    // Add the subject to the model for display
@@ -98,7 +98,7 @@ public class TaleemHub {
         return response;
     }
     
-    
+
     //---------------
     @GetMapping("/resource/share_resource/get_resource_categories")
     @ResponseBody
@@ -115,7 +115,7 @@ public class TaleemHub {
         model.addAttribute("categories", resource_category.values());
         return "resource-upload";
     }
-    
+
     @PostMapping("/resource/upload")
     public String shareResource_shareResources(
             @RequestParam("file") MultipartFile file,           // The file parameter
@@ -137,13 +137,13 @@ public class TaleemHub {
         model.addAttribute("subjects", resource_subject.values());
         return "resources-view";
     }
-    
+
  // Download resource file
     @GetMapping("resources/download/{resourceId}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Integer resourceId) {
         // Retrieve the resource from the database
         Resource resource = resourceService.getResourceById(resourceId);
-        
+
         if (resource == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Resource not found
         }
@@ -168,8 +168,9 @@ public class TaleemHub {
         }
     }
     //-------------------------------------------
-    
+
     @GetMapping("/teacher/accept_student/display_students")
+    @ResponseBody
     public Map<String, Object> acceptStudents_displayStudents(@RequestParam Integer teacherId) {
         Map<String, Object> response = new HashMap<>();
 
@@ -180,6 +181,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/teacher/accept_student/show_student_request")
+    @ResponseBody
     public Map<String, Object> acceptStudent_showStudentRequest(@RequestParam Integer teacherID,
                                                                 @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
@@ -191,6 +193,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/teacher/accept_student/accept_student")
+    @ResponseBody
     public Map<String, Object> acceptStudent_acceptStudent(@RequestParam Integer teacherID,
                                                            @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();

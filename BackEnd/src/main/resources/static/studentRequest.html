@@ -1,0 +1,83 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <link rel="stylesheet" href="css/main.css">-->
+<!--    <title>Student Request Management</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h2>Student Request Management | Teacher Portal</h2>-->
+
+<!--<div id="student-requests-page">-->
+<!--    <h3>View Student Requests</h3>-->
+<!--    <form id="teacherRequestForm">-->
+<!--        <label for="teacherID">Your Teacher ID:</label>-->
+<!--        <input type="number" id="teacherID" name="teacherID" required>-->
+<!--        <button type="button" id="showRequestsBtn">Show Requests</button>-->
+<!--    </form>-->
+
+<!--    <div class="student-requests hidden">-->
+<!--        <h4>Student Requests</h4>-->
+<!--        <ul id="studentRequestsList">-->
+<!--            &lt;!&ndash; List of student requests will appear here &ndash;&gt;-->
+<!--        </ul>-->
+<!--        <button type="button" id="backToTeacherPageBtn" class="hidden">Back</button>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div id="student-details-page" class="hidden">-->
+<!--    <h3>Student Request Details</h3>-->
+<!--    <div id="studentDetails">-->
+<!--        &lt;!&ndash; Detailed student information will appear here &ndash;&gt;-->
+<!--    </div>-->
+<!--    <button type="button" id="acceptRequestBtn">Accept Request</button>-->
+<!--    <button type="button" id="backToRequestsBtn">Back to Requests</button>-->
+<!--</div>-->
+
+<!--<script src="js/studentRequest.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Student Request Management</title>
+</head>
+<body>
+<h2>Student Request Management | Teacher Portal</h2>
+
+<!-- Student Requests Page -->
+<div id="student-requests-page">
+    <h3>View Student Requests</h3>
+    <form id="teacherRequestForm">
+        <label for="teacherID">Your Teacher ID:</label>
+        <input type="number" id="teacherID" name="teacherID" required>
+        <button type="button" id="showRequestsBtn">Show Requests</button>
+    </form>
+
+    <div class="student-requests hidden">
+        <h4>Student Requests</h4>
+        <ul id="studentRequestsList">
+            <!-- List of student requests will appear here -->
+        </ul>
+        <button type="button" id="backToTeacherPageBtn" class="hidden">Back</button>
+    </div>
+</div>
+
+<!-- Student Details Page -->
+<div id="student-details-page" class="hidden">
+    <h3>Student Request Details</h3>
+    <div id="studentDetails">
+        <!-- Detailed student information will appear here -->
+    </div>
+    <button type="button" id="acceptRequestBtn">Accept Request</button>
+    <button type="button" id="backToRequestsBtn">Back to Requests</button>
+</div>
+
+<script src="js/studentRequest.js"></script>
+</body>
+</html>

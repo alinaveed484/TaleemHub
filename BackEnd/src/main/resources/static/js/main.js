@@ -218,21 +218,6 @@ function sendMessage(event) {
     event.preventDefault();
 }
 
-//async function onMessageReceived(payload) {
-//    const message = JSON.parse(payload.body);
-//
-//    // Update the local chat history
-//    if (!chatHistories.has(message.senderId)) {
-//        chatHistories.set(message.senderId, []);
-//    }
-//    chatHistories.get(message.senderId).push(message);
-//
-//    // Only display the message if the chat is currently active
-//    if (selectedUserId && selectedUserId === message.senderId) {
-//        displayMessage(message.senderId, message.content);
-//    }
-//}
-
 async function onMessageReceived(payload) {
     const message = JSON.parse(payload.body);
 
