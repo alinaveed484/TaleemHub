@@ -1,7 +1,25 @@
 // FirebaseUI config.
 var uiConfig = {
     signInFlow: 'popup',
-    signInSuccessUrl: 'http://localhost:8080/student/select_mentor/display_teachers?subject=Mathematics',
+    callbacks: {
+        signInSuccessWithAuthResult: function (authResult) {
+            var user = authResult.user;
+            var credential = authResult.credential;
+            var providerId = authResult.additionalUserInfo.providerId;
+            var operationType = authResult.operationType;
+            // Do something with the returned AuthResult.
+            // Return type determines whether we continue the redirect
+            // automatically or whether we leave that to developer to handle.
+            if (authResult.additionalUserInfo.isNewUser) {
+                // If it's a new user, redirect to a registration page
+                window.location.href = "/Front/html/auth-register-basic.html";
+            } else {
+                // For existing users, redirect to a dashboard
+                window.location.href = "/Front/html/index.html";
+            }
+        },
+    },
+    signInSuccessUrl: 'http://localhost:8080/index.html',
     signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         {
