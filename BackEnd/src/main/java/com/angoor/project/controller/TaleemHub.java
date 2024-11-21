@@ -101,6 +101,7 @@ public class TaleemHub {
     }
 
     @PostMapping("/resource/share_resource/share_resources")
+    @ResponseBody
     public ResponseEntity<String>shareResource_shareResources(
     		 @RequestParam("file") MultipartFile file,           // The file parameter
              @RequestParam("title") String title,                // Other resource details
@@ -113,6 +114,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/teacher/accept_student/display_students")
+    @ResponseBody
     public Map<String, Object> acceptStudents_displayStudents(@RequestParam Integer teacherId) {
         Map<String, Object> response = new HashMap<>();
 
@@ -123,6 +125,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/teacher/accept_student/show_student_request")
+    @ResponseBody
     public Map<String, Object> acceptStudent_showStudentRequest(@RequestParam Integer teacherID,
                                                                 @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
@@ -134,6 +137,7 @@ public class TaleemHub {
     }
 
     @GetMapping("/teacher/accept_student/accept_student")
+    @ResponseBody
     public Map<String, Object> acceptStudent_acceptStudent(@RequestParam Integer teacherID,
                                                            @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
