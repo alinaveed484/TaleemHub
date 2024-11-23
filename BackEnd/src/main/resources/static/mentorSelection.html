@@ -1,3 +1,104 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <link rel="stylesheet" href="css/main.css">-->
+<!--  <title>Mentor Selection</title>-->
+<!--  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>-->
+<!--  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>-->
+<!--  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics-compat.js"></script>-->
+<!--  <script src="scripts/config.js"></script>-->
+<!--  <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>-->
+
+
+<!--</head>-->
+<!--<body>-->
+<!--<h2>Mentor Selection | Student Portal</h2>-->
+
+<!--<div class="mentor-selection" id="mentor-selection-page">-->
+<!--  <h2>Select a Mentor</h2>-->
+<!--  <form id="mentorSelectionForm">-->
+<!--    <label for="studentID">Your Student ID:</label>-->
+<!--    <input type="number" id="studentID" name="studentID" required>-->
+
+<!--    <label for="subject">Select Subject:</label>-->
+<!--    <select id="subject" name="subject" required>-->
+<!--      <option value="">Select a Subject</option>-->
+<!--      <option value="Maths">Maths</option>-->
+<!--      <option value="Chemistry">Chemistry</option>-->
+<!--      <option value="History">History</option>-->
+<!--      <option value="Computer">Computer</option>-->
+<!--      <option value="Physics">Physics</option>-->
+<!--      <option value="Biology">Biology</option>-->
+<!--      <option value="Economics">Economics</option>-->
+<!--      <option value="Accounting">Accounting</option>-->
+<!--      <option value="Statistics">Statistics</option>-->
+<!--      <option value="Probability">Probability</option>-->
+<!--      <option value="Business">Business</option>-->
+
+<!--    </select>-->
+<!--    <button type="button" id="showTeachersBtn">Show Teachers</button>-->
+<!--  </form>-->
+<!--  <div id="teachersList" class="hidden">-->
+<!--    <h3>Available Teachers</h3>-->
+<!--    <ul id="teacherListContainer">-->
+<!--      &lt;!&ndash; Teachers will be dynamically loaded here &ndash;&gt;-->
+<!--    </ul>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="mentor-details hidden" id="mentor-details-page">-->
+<!--  <h2>Teacher Details</h2>-->
+<!--  <div id="teacherDetails">-->
+<!--    &lt;!&ndash; Teacher details will be dynamically loaded here &ndash;&gt;-->
+<!--  </div>-->
+<!--  <button type="button" id="sendMentorRequestBtn">Send Mentor Request</button>-->
+<!--  <button type="button" id="backToSelectionBtn">Back</button>-->
+<!--</div>-->
+
+<!--<script src="js/mentorSelection.js"></script>-->
+
+<!--<script>-->
+<!--    document.getElementById('mentorSelectionForm').addEventListener('button', function(event) {-->
+<!--    // Prevent the form from submitting and causing a page reload-->
+<!--    event.preventDefault();-->
+
+<!--    // Now, you can handle the form submission here-->
+<!--    firebase.auth().onAuthStateChanged(function(user) {-->
+<!--      if (user) {-->
+<!--        console.log("User logged in:", user);-->
+<!--        const uid = user.uid;  // Get UID-->
+
+<!--        // Send the UID to your backend-->
+<!--        sendUserDataToBackend(uid);-->
+<!--      } else {-->
+<!--        console.log("User not logged in.");-->
+<!--      }-->
+<!--    });-->
+<!--  });-->
+
+<!--  async function sendUserDataToBackend(uid) {-->
+<!--    const response = await fetch('/your-backend-endpoint', {-->
+<!--      method: 'POST',-->
+<!--      headers: {-->
+<!--        'Content-Type': 'application/json',-->
+<!--      },-->
+<!--      body: JSON.stringify({ uid: uid })  // Send UID in request body-->
+<!--    });-->
+
+<!--    if (response.ok) {-->
+<!--      const data = await response.json();-->
+<!--      console.log('Backend response:', data);-->
+<!--    } else {-->
+<!--      console.log('Error:', response.status);-->
+<!--    }-->
+<!--  }-->
+
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +106,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/main.css">
   <title>Mentor Selection</title>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics-compat.js"></script>
+  <script src="scripts/config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
 </head>
 <body>
 <h2>Mentor Selection | Student Portal</h2>
@@ -12,13 +118,29 @@
 <div class="mentor-selection" id="mentor-selection-page">
   <h2>Select a Mentor</h2>
   <form id="mentorSelectionForm">
-    <label for="studentID">Your Student ID:</label>
-    <input type="number" id="studentID" name="studentID" required>
-
-    <label for="teacherID">Enter Teacher ID:</label>
-    <input type="number" id="teacherID" name="teacherID" required>
-    <button type="button" id="showTeacherDetailsBtn">Show Teacher Details</button>
+    <label for="subject">Select Subject:</label>
+    <select id="subject" name="subject" required>
+      <option value="">Select a Subject</option>
+      <option value="Maths">Maths</option>
+      <option value="Chemistry">Chemistry</option>
+      <option value="History">History</option>
+      <option value="Computer">Computer</option>
+      <option value="Physics">Physics</option>
+      <option value="Biology">Biology</option>
+      <option value="Economics">Economics</option>
+      <option value="Accounting">Accounting</option>
+      <option value="Statistics">Statistics</option>
+      <option value="Probability">Probability</option>
+      <option value="Business">Business</option>
+    </select>
+    <button type="button" id="showTeachersBtn">Show Teachers</button>
   </form>
+  <div id="teachersList" class="hidden">
+    <h3>Available Teachers</h3>
+    <ul id="teacherListContainer">
+      <!-- Teachers will be dynamically loaded here -->
+    </ul>
+  </div>
 </div>
 
 <div class="mentor-details hidden" id="mentor-details-page">
@@ -33,3 +155,4 @@
 <script src="js/mentorSelection.js"></script>
 </body>
 </html>
+

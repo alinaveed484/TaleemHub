@@ -1,11 +1,7 @@
 package com.angoor.project.controller;
 
 import com.angoor.project.dto.TeacherDto;
-import com.angoor.project.model.Person;
-import com.angoor.project.model.PersonDTO;
-import com.angoor.project.model.Resource;
-import com.angoor.project.model.resource_category;
-import com.angoor.project.model.resource_subject;
+import com.angoor.project.model.*;
 import com.angoor.project.repository.CommentRepo;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.PostRepo;
@@ -69,11 +65,9 @@ public class TaleemHub {
     }
 
     @GetMapping("/student/select_mentor/display_teachers")
-    public String selectMentor_displayTeachers(@RequestParam String subject, Model model) {
-        List<TeacherDto> teachers = managementService.displayTeachers(subject);
-        model.addAttribute("teachers", teachers); // Add the list of TeacherDTOs to the model
-        model.addAttribute("subject", subject);    // Add the subject to the model for display
-        return "displayTeachers";  // Name of the Thymeleaf template
+    @ResponseBody
+    public List<TeacherDto> selectMentor_displayTeachers(@RequestParam String subject) {
+        return managementService.displayTeachers(subject); // Name of the Thymeleaf template
     }
 
 
@@ -90,9 +84,9 @@ public class TaleemHub {
     
     @GetMapping("/student/select_mentor/send_mentor_request")
     @ResponseBody
-    public Map<String, Object> selectMentor_sendMentorRequest(@RequestParam Integer teacherID, @RequestParam Integer studentID) {
+    public Map<String, Object> selectMentor_sendMentorRequest(@RequestParam Integer teacherID, @RequestParam String studentUID) {
         Map<String, Object> response = new HashMap<>();
-        response = managementService.sendMentorRequest(teacherID,studentID);
+        response = managementService.sendMentorRequest(teacherID,studentUID);
         //this map will contain all the details of the single teacher.
         
         return response;
@@ -171,10 +165,10 @@ public class TaleemHub {
 
     @GetMapping("/teacher/accept_student/display_students")
     @ResponseBody
-    public Map<String, Object> acceptStudents_displayStudents(@RequestParam Integer teacherId) {
+    public Map<String, Object> acceptStudents_displayStudents(@RequestParam String teacherUID) {
         Map<String, Object> response = new HashMap<>();
 
-        response = managementService.displayStudents(teacherId);
+        response = managementService.displayStudents(teacherUID);
         //the map will only contain name and subject of all teachers.
 
         return response;
@@ -182,11 +176,11 @@ public class TaleemHub {
 
     @GetMapping("/teacher/accept_student/show_student_request")
     @ResponseBody
-    public Map<String, Object> acceptStudent_showStudentRequest(@RequestParam Integer teacherID,
+    public Map<String, Object> acceptStudent_showStudentRequest(@RequestParam String teacherUID,
                                                                 @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
 
-        response = managementService.showStudentRequest(teacherID, studentID);
+        response = managementService.showStudentRequest(teacherUID, studentID);
         //this map will contain all the details of the single teacher.
 
         return response;
@@ -194,11 +188,11 @@ public class TaleemHub {
 
     @GetMapping("/teacher/accept_student/accept_student")
     @ResponseBody
-    public Map<String, Object> acceptStudent_acceptStudent(@RequestParam Integer teacherID,
+    public Map<String, Object> acceptStudent_acceptStudent(@RequestParam String teacherUID,
                                                            @RequestParam Integer studentID) {
         Map<String, Object> response = new HashMap<>();
 
-        response = managementService.acceptStudent(studentID, teacherID);
+        response = managementService.acceptStudent(teacherUID, studentID);
         //this map will contain all the details of the single teacher.
 
         return response;
@@ -207,6 +201,39 @@ public class TaleemHub {
 
 
     // Chat Functionalities
+
+    @GetMapping("/getPersonDTO")
+    @ResponseBody
+    public PersonDTO getPersonDTO(@RequestParam String uid) {
+
+        // Fetch user record from Firebase by UID
+        Person person = personRepo.findByUid(uid).orElse(null);
+
+        if (person == null) {
+            throw new RuntimeException("Person not found for UID: " + uid);
+        }
+
+        // Determine the type of the person
+        String type;
+        if (person instanceof Student) {
+            type = "Student";
+        } else if (person instanceof Teacher) {
+            type = "Teacher";
+        } else {
+            type = "Unknown"; // Optional: Handle unexpected types
+        }
+
+        // Map Person to PersonDTO
+        return new PersonDTO(
+                person.getId(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.isStatus(), // Assuming a boolean field in Person
+                type
+        );
+    }
+
+
 
     @MessageMapping("/user.addUser")
     @SendTo("/user/topic")

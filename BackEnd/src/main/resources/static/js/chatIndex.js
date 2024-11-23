@@ -14,16 +14,53 @@ let personDTO = {}; // Store user data in an object
 let selectedUserId = null;
 const chatHistories = new Map(); // To store local chat history for each user
 
+// Firebase Authentication
+firebase.auth().onAuthStateChanged(async function (user) {
+    if (user) {
+        console.log("User logged in:", user);
+
+        try {
+            // Fetch the PersonDTO using the UID from Firebase
+            const response = await fetch(`/getPersonDTO?uid=${user.uid}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch PersonDTO: ${response.statusText}`);
+            }
+
+            // Parse the PersonDTO from the response
+            const personData = await response.json();
+
+            // Populate personDTO with the response
+            personDTO.id = personData.id;
+            personDTO.firstName = personData.firstName;
+            personDTO.lastName = personData.lastName;
+            personDTO.status = personData.status;
+            personDTO.type = personData.type;
+
+            console.log("PersonDTO populated:", personDTO);
+
+            // Proceed to connect the user to WebSocket
+            connect();
+            //connectUserToChat();
+        } catch (error) {
+            console.error("Error fetching PersonDTO:", error);
+            alert("Failed to fetch user details. Please try again.");
+        }
+    } else {
+        console.error("User not logged in.");
+        alert("Please log in to access the chat application.");
+    }
+});
+
 function connect(event) {
-    // Capture form data based on PersonDTO fields
-    personDTO.id = parseInt(document.querySelector('#id').value.trim());
-    personDTO.firstName = document.querySelector('#firstName').value.trim();
-    personDTO.lastName = document.querySelector('#lastName').value.trim();
-    personDTO.status = document.querySelector('#status').value === 'true';
-    personDTO.type = document.querySelector('#type').value.trim();
+//    // Capture form data based on PersonDTO fields
+//    personDTO.id = parseInt(document.querySelector('#id').value.trim());
+//    personDTO.firstName = document.querySelector('#firstName').value.trim();
+//    personDTO.lastName = document.querySelector('#lastName').value.trim();
+//    personDTO.status = document.querySelector('#status').value === 'true';
+//    personDTO.type = document.querySelector('#type').value.trim();
 
     if (personDTO.firstName && personDTO.lastName) {
-        usernamePage.classList.add('hidden');
+        //usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
         const socket = new SockJS('/ws');
@@ -254,7 +291,7 @@ function onLogout() {
     window.location.reload();
 }
 
-usernameForm.addEventListener('submit', connect, true);
+//usernameForm.addEventListener('submit', connect, true);
 messageForm.addEventListener('submit', sendMessage, true);
 logout.addEventListener('click', onLogout, true);
 window.onbeforeunload = () => onLogout();
