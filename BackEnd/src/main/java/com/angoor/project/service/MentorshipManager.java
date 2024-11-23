@@ -71,6 +71,7 @@ public class MentorshipManager {
 		for (Teacher t : teachersInMemory) {
 			if (subject.equals(t.getSubjectSpecialization())) {
 				TeacherDto teacherDTO = new TeacherDto(
+						t.getId().toString(),
 						t.getFirstName(),
 						t.getLastName(),
 						t.getProfilePhotoURL(),
@@ -116,13 +117,14 @@ public class MentorshipManager {
 
 
 	@Transactional
-	public Map<String, Object> sendMentorRequest(Integer teacherID, Integer studentID) {
+	public Map<String, Object> sendMentorRequest(Integer teacherID, String studentUID) {
 
 		Map<String, Object> response = new HashMap<>();
 
 		// Fetch Teacher and Student using JPA repositories
 		Teacher teacher = teacherRepository.findById(teacherID).orElse(null);
-		Student student = studentRepository.findById(studentID).orElse(null);
+		Person student_person = personRepo.findByUid(studentUID).orElse(null);
+		Student student = studentRepository.findById(student_person.getId()).orElse(null);
 
 		if (teacher == null || student == null) {
 			response.put("Error", "Teacher or Student ID not found");
@@ -250,9 +252,10 @@ public class MentorshipManager {
 
 
 	@Transactional
-	public Map<String, Object> displayStudents(Integer teacherId) {
+	public Map<String, Object> displayStudents(String teacherUID) {
 		Map<String, Object> response = new HashMap<>();
-		Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
+		Person teacher_person = personRepo.findByUid(teacherUID).orElse(null);
+		Teacher teacher = teacherRepository.findById(teacher_person.getId()).orElse(null);
 
 		if (teacher != null) {
 			// Initialize the lazy-loaded studentRequests collection
@@ -277,10 +280,10 @@ public class MentorshipManager {
 		return response;
 	}
 
-	public Map<String, Object> showStudentRequest(Integer teacherID, Integer studentID) {
+	public Map<String, Object> showStudentRequest(String teacherUID, Integer studentID) {
 		Map<String, Object> response = new HashMap<>();
-
-		Teacher teacher = teacherRepository.findById(teacherID).orElse(null);
+		Person teacher_person = personRepo.findByUid(teacherUID).orElse(null);
+		Teacher teacher = teacherRepository.findById(teacher_person.getId()).orElse(null);
 
 		if (teacher != null) {
 			Set<Student> students = teacher.getStudentRequests();
@@ -310,19 +313,20 @@ public class MentorshipManager {
 		return response;
 	}
 
-	public Map<String, Object> acceptStudent(Integer teacherID, Integer studentID) {
+	public Map<String, Object> acceptStudent(String teacherUID, Integer studentID) {
 		Map<String, Object> response = new HashMap<>();
 
-		assignTeacherToStudent(teacherID, studentID);
+		assignTeacherToStudent(teacherUID, studentID);
 
 		response.put("value", "Success!");
 		return response;
 	}
 
-	public void assignTeacherToStudent(Integer studentId, Integer teacherId) {
+	public void assignTeacherToStudent(String teacherUID, Integer studentID) {
 		// Find student and teacher using their IDs
-		Student student = studentRepository.findById(studentId).orElse(null);
-		Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
+		Person teacher_person = personRepo.findByUid(teacherUID).orElse(null);
+		Student student = studentRepository.findById(studentID).orElse(null);
+		Teacher teacher = teacherRepository.findById(teacher_person.getId()).orElse(null);
 
 		if (student != null && teacher != null) {
 			// Add the teacher to the student's list of teachers

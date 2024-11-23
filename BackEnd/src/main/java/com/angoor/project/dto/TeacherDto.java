@@ -3,6 +3,7 @@ package com.angoor.project.dto;
 import java.time.LocalDate;
 
 public class TeacherDto {
+    private String id;
     private String firstName;
     private String lastName;
     private String profilePhotoURL;
@@ -15,9 +16,10 @@ public class TeacherDto {
     public TeacherDto() {
     }
 
-    public TeacherDto(String firstName, String lastName, String profilePhotoURL,
+    public TeacherDto(String id, String firstName, String lastName, String profilePhotoURL,
                       Integer yearsExperience, LocalDate hireDate,
                       String subjectSpecialization, String qualification) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.profilePhotoURL = profilePhotoURL;
@@ -25,6 +27,14 @@ public class TeacherDto {
         this.hireDate = hireDate;
         this.subjectSpecialization = subjectSpecialization;
         this.qualification = qualification;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setFirstName(String firstName) {

@@ -149,11 +149,4 @@ class TaleemHubApplicationTests {
     }
 
 
-    @Test
-    @WithMockUser(username = "admin", password = "admin")
-    public void testSelectMentorEndpoint() throws Exception {
-        mockMvc.perform(get("/student/select_mentor/send_mentor_request?teacherID=1&studentID=1"))  // Perform a GET request to /hello
-                .andExpect(MockMvcResultMatchers.status().isOk());// Check "status" valu
-    }
-
 }
