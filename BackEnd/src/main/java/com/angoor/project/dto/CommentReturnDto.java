@@ -7,13 +7,33 @@ public class CommentReturnDto {
     private String content;
     private LocalDateTime created_at;
     private String author;
+    private Integer votes;
+    private Integer id;
 
-    public CommentReturnDto(String content, LocalDateTime created_at, String author) {
+    public CommentReturnDto(String content, LocalDateTime created_at, String author, Integer votes, Integer id) {
         this.content = content;
         this.created_at = created_at;
         this.author = author;
+        this.votes = votes;
+        this.id = id;
     }
     public CommentReturnDto() {}
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setVotes(Integer votes) {
+        this.votes = votes;
+    }
+
+    public Integer getVotes() {
+        return votes;
+    }
 
     public void setContent(String content) {
         this.content = content;

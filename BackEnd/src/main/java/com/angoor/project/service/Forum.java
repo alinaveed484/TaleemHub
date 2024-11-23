@@ -59,24 +59,18 @@ public class Forum {
     }
 
     //This will increase the Votes and the Points of the Person
-    public Comment voteComment(Integer commentId, String voteType) {
+    public Comment voteComment(Integer commentId) {
         Comment comment = commentRepo.findById(commentId)
                 .orElseThrow(() -> new NoSuchElementException("Comment not found"));
         Person person = comment.getPerson();
 
-        if ("upvote".equalsIgnoreCase(voteType)) {
-            // Increase vote count for upvote
-            comment.setVoteCount(comment.getVoteCount() + 1);
+        // Increase vote count for upvote
+        comment.setVoteCount(comment.getVoteCount() + 1);
 
-            // Check if vote count has reached the threshold to add points
-            if (comment.getVoteCount() % VOTE_THRESHOLD == 0) {
-                person.setPoints(person.getPoints() + POINTS_PER_THRESHOLD);
-                personRepo.save(person); // Save the updated points for the user
-            }
-
-        } else if ("downvote".equalsIgnoreCase(voteType)) {
-            // Decrease vote count for downvote without affecting points
-            comment.setVoteCount(comment.getVoteCount() - 1);
+        // Check if vote count has reached the threshold to add points
+        if (comment.getVoteCount() % VOTE_THRESHOLD == 0) {
+            person.setPoints(person.getPoints() + POINTS_PER_THRESHOLD);
+            personRepo.save(person); // Save the updated points for the user
         }
 
         // Save the updated comment
