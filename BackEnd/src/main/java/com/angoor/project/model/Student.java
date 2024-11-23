@@ -23,9 +23,9 @@ public class Student extends Person {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "Student_Teacher_Request",
-            joinColumns = @JoinColumn(name = "studentId"),
-            inverseJoinColumns = @JoinColumn(name = "teacherId")
+            name = "student_teacher_request",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "teacher_id")
     )
     private Set<Teacher> teacherRequests = new HashSet<>();
 

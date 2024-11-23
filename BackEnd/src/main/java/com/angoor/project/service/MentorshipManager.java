@@ -8,6 +8,7 @@ import com.angoor.project.model.Student;
 import com.angoor.project.model.Teacher;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.StudentRepository;
+import com.angoor.project.repository.StudentTeacherRequestRepo;
 import com.angoor.project.repository.TeacherRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -28,63 +29,40 @@ public class MentorshipManager {
     //@Transient Can be used for attributes that you don't want the ORM to map to Columns in the DB
 	private final StudentRepository studentRepository;
 	private final TeacherRepository teacherRepository;
+	private final StudentTeacherRequestRepo studentTeacherRequestRepo;
 	private final PersonRepo personRepo;
 
-    private int studentCount = 0;
-    private int teacherCount = 0;
-
-    private static List<Student> studentsInMemory = new ArrayList<>();
-    private static List<Teacher> teachersInMemory = new ArrayList<>();
 
 	@Autowired
-	public MentorshipManager(StudentRepository studentRepository, TeacherRepository teacherRepository, PersonRepo personRepo) {
+	public MentorshipManager(StudentRepository studentRepository, TeacherRepository teacherRepository, PersonRepo personRepo, StudentTeacherRequestRepo studentTeacherRequestRepo) {
 		this.studentRepository = studentRepository;
 		this.teacherRepository = teacherRepository;
+		this.studentTeacherRequestRepo = studentTeacherRequestRepo;
 		this.personRepo = personRepo;
 	}
 
 	//create a table for student mentorship request to teacher (selectMentor use case)
-    
-
-    @PostConstruct
-    public void init() {
-        studentsInMemory = studentRepository.findAll();
-        teachersInMemory = teacherRepository.findAll();
-        this.studentCount = studentsInMemory.size();
-        this.teacherCount = teachersInMemory.size();
-    }
-
-    public void addStudent(Student student) {
-        studentsInMemory.add(student);
-        studentRepository.save(student);
-    }
-
-    public void addTeacher(Teacher teacher) {
-        teachersInMemory.add(teacher);
-        teacherRepository.save(teacher);
-    }
-
 
 
 	public List<TeacherDto> displayTeachers(String subject) {
-		List<TeacherDto> response = new ArrayList<>();
-		for (Teacher t : teachersInMemory) {
-			if (subject.equals(t.getSubjectSpecialization())) {
-				TeacherDto teacherDTO = new TeacherDto(
-						t.getId().toString(),
-						t.getFirstName(),
-						t.getLastName(),
-						t.getProfilePhotoURL(),
-						t.getYearsExperience(),
-						t.getHireDate(),
-						t.getSubjectSpecialization(),
-						t.getQualification()
-				);
-				response.add(teacherDTO);
-			}
-		}
+		// Fetch teachers from the database using the repository
+		List<Teacher> teachers = teacherRepository.findBySubjectSpecialization(subject);
+
+		// Map each Teacher entity to TeacherDto
+		List<TeacherDto> response = teachers.stream().map(t -> new TeacherDto(
+				t.getId().toString(),
+				t.getFirstName(),
+				t.getLastName(),
+				t.getProfilePhotoURL(),
+				t.getYearsExperience(),
+				t.getHireDate(),
+				t.getSubjectSpecialization(),
+				t.getQualification()
+		)).toList();
+
 		return response;
 	}
+
 
 
 
@@ -357,5 +335,37 @@ public class MentorshipManager {
 	    }
 	    return result;
 	}
+
+	@Transactional
+	public Map<String, Object> rejectStudent(String teacherUID, Integer studentID) {
+		Map<String, Object> response = new HashMap<>();
+
+		// Find the teacher by UID
+		Person person_teacher = personRepo.findByUid(teacherUID).orElse(null);
+
+		if (person_teacher == null) {
+			response.put("value", "Failure: Teacher not found!");
+			return response;
+		}
+
+		// Find the student by ID
+		Student student = studentRepository.findById(studentID).orElse(null);
+
+		if (student == null) {
+			response.put("value", "Failure: Student not found!");
+			return response;
+		}
+
+		// Remove the entry from the student_teacher_request table
+		try {
+			studentTeacherRequestRepo.deleteByStudentIdAndTeacherId(studentID, person_teacher.getId());
+			response.put("value", "Success: Request rejected!");
+		} catch (Exception e) {
+			response.put("value", "Failure: Unable to reject request. Error: " + e.getMessage());
+		}
+
+		return response;
+	}
+
 }
 

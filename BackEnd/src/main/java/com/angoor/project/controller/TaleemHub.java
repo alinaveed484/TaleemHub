@@ -5,6 +5,7 @@ import com.angoor.project.model.*;
 import com.angoor.project.repository.CommentRepo;
 import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.PostRepo;
+import com.angoor.project.repository.StudentTeacherRequestRepo;
 import com.angoor.project.service.Forum;
 import com.angoor.project.service.MentorshipManager;
 import com.angoor.project.service.ResourceHub;
@@ -41,15 +42,18 @@ public class TaleemHub {
     private final PostRepo postRepo;
     private final CommentRepo commentRepo;
     private final PersonRepo personRepo;
+    private final StudentTeacherRequestRepo studentTeacherRequestRepo;
+
 
     @Autowired
-    public TaleemHub(MentorshipManager managementService,ResourceHub resourceService, PostRepo postRepo, CommentRepo commentRepo, Forum forumService, PersonRepo personRepo) {
+    public TaleemHub(MentorshipManager managementService,ResourceHub resourceService, PostRepo postRepo, CommentRepo commentRepo, Forum forumService, PersonRepo personRepo, StudentTeacherRequestRepo studentTeacherRequestRepo) {
         this.managementService = managementService;
         this.resourceService = resourceService;
         this.postRepo = postRepo;
         this.commentRepo = commentRepo;
         this.forumService = forumService;
         this.personRepo = personRepo;
+        this.studentTeacherRequestRepo = studentTeacherRequestRepo;
     }
 
 	//MentorshipManager managementService = new MentorshipManager();
@@ -193,6 +197,19 @@ public class TaleemHub {
         Map<String, Object> response = new HashMap<>();
 
         response = managementService.acceptStudent(teacherUID, studentID);
+        //this map will contain all the details of the single teacher.
+
+        return response;
+    }
+
+    @GetMapping("teacher/accept_student/reject_student")
+    @ResponseBody
+    public Map<String, Object> acceptStudent_rejectStudent(@RequestParam String teacherUID,
+                                                           @RequestParam Integer studentID)
+    {
+        Map<String, Object> response = new HashMap<>();
+
+        response = managementService.rejectStudent(teacherUID, studentID);
         //this map will contain all the details of the single teacher.
 
         return response;

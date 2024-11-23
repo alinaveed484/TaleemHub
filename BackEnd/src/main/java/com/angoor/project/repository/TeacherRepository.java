@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
 
     @Query(value = "SELECT person_type FROM person WHERE id = :id", nativeQuery = true)
     String findPersonTypeById(@Param("id") Integer id);
+
+    List<Teacher> findBySubjectSpecialization(String subjectSpecialization);
 }
