@@ -300,6 +300,7 @@ const studentDetailsContainer = document.querySelector('#studentDetails');
 const acceptRequestBtn = document.querySelector('#acceptRequestBtn');
 const backToRequestsBtn = document.querySelector('#backToRequestsBtn');
 const backToTeacherPageBtn = document.querySelector('#backToTeacherPageBtn');
+const rejectRequestBtn = document.querySelector('#rejectRequestBtn');
 
 let selectedStudentID = null;
 let teacherUID = null;
@@ -329,6 +330,30 @@ firebase.auth().onAuthStateChanged(async (user) => {
         // Optionally redirect to login page
     }
 });
+
+rejectRequestBtn.addEventListener('click', async () => {
+    if (!teacherUID || !selectedStudentID) {
+        alert("Missing Teacher ID or Student ID to reject the request!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/teacher/accept_student/reject_student?teacherUID=${teacherUID}&studentID=${selectedStudentID}`, {
+            method: 'GET', // Use appropriate HTTP method
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to reject student: ${response.statusText}`);
+        }
+
+        alert("Student request rejected successfully!");
+        backToRequests();
+    } catch (error) {
+        console.error("Error rejecting student request:", error);
+        alert("Unable to reject student request. Please try again.");
+    }
+});
+
 
 // Display list of student requests
 function displayStudentRequests(requests) {
@@ -397,6 +422,23 @@ acceptRequestBtn.addEventListener('click', async () => {
         }
 
         alert("Student request accepted successfully!");
+
+        try {
+                const response = await fetch(`/teacher/accept_student/reject_student?teacherUID=${teacherUID}&studentID=${selectedStudentID}`, {
+                    method: 'GET', // Use appropriate HTTP method
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to reject student: ${response.statusText}`);
+                }
+
+                //alert("Student request rejected successfully!");
+                //backToRequests();
+            } catch (error) {
+                console.error("Error rejecting student request:", error);
+                alert("Unable to reject student request. Please try again.");
+            }
+
         backToRequests();
     } catch (error) {
         console.error("Error accepting student request:", error);
@@ -416,4 +458,22 @@ function backToRequests() {
     studentDetailsPage.classList.add('hidden');
     studentRequestsPage.classList.remove('hidden');
     studentDetailsContainer.innerHTML = ''; // Clear previous details
+
+    // Refresh the student request list after an action
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            teacherUID = user.uid;
+            try {
+                const response = await fetch(`/teacher/accept_student/display_students?teacherUID=${teacherUID}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch updated student requests: ${response.statusText}`);
+                }
+                const studentRequests = await response.json();
+                displayStudentRequests(studentRequests);
+            } catch (error) {
+                console.error("Error refreshing student requests:", error);
+            }
+        }
+    });
 }
+
