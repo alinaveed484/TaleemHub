@@ -95,8 +95,10 @@ public class PersonController {
             person.setPhone(phone);
             person.setUid(uid);
 
-            // Save person (replace with your repository/service logic)
-            personRepo.save(person);
+            if(personRepo.findByUid(uid).isEmpty()) {
+                // Save person (replace with your repository/service logic)
+                personRepo.save(person);
+            }
 
             return ResponseEntity.ok(person);
         } catch (Exception e) {

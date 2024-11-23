@@ -22,7 +22,7 @@ firebase.auth().onAuthStateChanged(async function (user) {
         try {
             // Fetch the PersonDTO using the UID from Firebase
             const response = await fetch(`/getPersonDTO?uid=${user.uid}`);
-            if (!response.ok) {
+            if (!response) {
                 throw new Error(`Failed to fetch PersonDTO: ${response.statusText}`);
             }
 

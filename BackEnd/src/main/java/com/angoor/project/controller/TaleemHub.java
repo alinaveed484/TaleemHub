@@ -24,13 +24,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class TaleemHub {
@@ -221,7 +219,7 @@ public class TaleemHub {
 
     @GetMapping("/getPersonDTO")
     @ResponseBody
-    public PersonDTO getPersonDTO(@RequestParam String uid) {
+    public ResponseEntity<PersonDTO> getPersonDTO(@RequestParam String uid) {
 
         // Fetch user record from Firebase by UID
         Person person = personRepo.findByUid(uid).orElse(null);
@@ -240,14 +238,16 @@ public class TaleemHub {
             type = "Unknown"; // Optional: Handle unexpected types
         }
 
-        // Map Person to PersonDTO
-        return new PersonDTO(
+        PersonDTO dto = new PersonDTO(
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                person.isStatus(), // Assuming a boolean field in Person
+                person.isStatus(),
                 type
         );
+
+        // Map Person to PersonDTO
+        return ResponseEntity.ok(dto);
     }
 
 
@@ -273,5 +273,29 @@ public class TaleemHub {
         return ResponseEntity.ok(connectedUsers);
     }
 
+    @GetMapping("/connect_check")
+    @ResponseBody
+    public ResponseEntity<?> connectCheck(@RequestParam String uid) {
+        Optional<Person> personOptional = personRepo.findByUid(uid);
+
+        if (personOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Person not found"));
+        }
+
+        Person person = personOptional.get();
+        String redirectUrl;
+        if (person instanceof Student) {
+            redirectUrl = "/mentorSelection.html";
+        } else if (person instanceof Teacher) {
+            redirectUrl = "/studentRequest.html";
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Handle unexpected case
+        }
+
+        return ResponseEntity.status(HttpStatus.FOUND) // HTTP 302 for redirection
+                .location(URI.create(redirectUrl))
+                .build();
+    }
 
 }
