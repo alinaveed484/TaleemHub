@@ -56,6 +56,27 @@ public class CalendarController {
 		this.mentorshipService = mentorshipService;
     }
     
+    @GetMapping("/auth/button")
+    public String authingFunction(){
+    	return "calendar-button";
+    }
+    
+    @GetMapping("/auth/checkCalendarStatus")
+    public ResponseEntity<Map<String, Boolean>> checkCalendarStatus(@RequestParam String firebaseUid) {
+        Person person = mentorshipService.findByFirebaseUid(firebaseUid);
+        Map<String, Boolean> response = new HashMap<>();
+
+        if (person == null || person.getCalendartoken() == null) {
+            response.put("showButton", true);
+        } else {
+            boolean isRefreshTokenValid = calendarService.checkRefreshToken(person.getCalendartoken().getRefreshToken());
+            response.put("showButton", !isRefreshTokenValid);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+    
+    
     @GetMapping("/auth/googleCalendar")
     public ResponseEntity<Void> redirectToGoogle(@RequestParam String firebaseUid) {
         String state = URLEncoder.encode(firebaseUid, StandardCharsets.UTF_8);
@@ -80,36 +101,55 @@ public class CalendarController {
 
         String firebaseUid = URLDecoder.decode(state, StandardCharsets.UTF_8);
 
-        // Proceed with token exchange as before
-        RestTemplate restTemplate = new RestTemplate();
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("client_id", clientId);
-        requestBody.add("client_secret", clientSecret);
-        requestBody.add("code", code);
-        requestBody.add("redirect_uri", redirectUri);
-        requestBody.add("grant_type", "authorization_code");
+        try {
+            // Token exchange logic
+	        // Proceed with token exchange as before
+	        RestTemplate restTemplate = new RestTemplate();
+	        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+	        requestBody.add("client_id", clientId);
+	        requestBody.add("client_secret", clientSecret);
+	        requestBody.add("code", code);
+	        requestBody.add("redirect_uri", redirectUri);
+	        requestBody.add("grant_type", "authorization_code");
+	
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+	
+	        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
+	        ResponseEntity<Map> response = restTemplate.postForEntity("https://oauth2.googleapis.com/token", request, Map.class);
+	
+	        Map<String, Object> tokens = response.getBody();
+	        String accessToken = (String) tokens.get("access_token");
+	        String refreshToken = (String) tokens.get("refresh_token");
+	        Integer expiresIn = (Integer) tokens.get("expires_in");
+	
+	        // Calculate expiration time
+	        LocalDateTime expirationTime = LocalDateTime.now().plusSeconds(expiresIn);
+	
+	        // Save tokens using the uid from state
+	        boolean worked = calendarService.saveTokens(firebaseUid, accessToken, refreshToken, expirationTime);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity("https://oauth2.googleapis.com/token", request, Map.class);
-
-        Map<String, Object> tokens = response.getBody();
-        String accessToken = (String) tokens.get("access_token");
-        String refreshToken = (String) tokens.get("refresh_token");
-        Integer expiresIn = (Integer) tokens.get("expires_in");
-
-        // Calculate expiration time
-        LocalDateTime expirationTime = LocalDateTime.now().plusSeconds(expiresIn);
-
-        // Save tokens using the uid from state
-        boolean worked = calendarService.saveTokens(firebaseUid, accessToken, refreshToken, expirationTime);
-
-        if (worked)
-            return ResponseEntity.ok("Done!");
-        else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was some problem!");
+	        if (worked) {
+	            // JavaScript response for alert and redirection
+	            String htmlResponse = "<!DOCTYPE html>" +
+	                    "<html>" +
+	                    "<head><title>Authentication</title></head>" +
+	                    "<body>" +
+	                    "<script>" +
+	                    "alert('Done authentication!');" +
+	                    "window.location.href = '/';" +
+	                    "</script>" +
+	                    "</body>" +
+	                    "</html>";
+	            return ResponseEntity.ok(htmlResponse);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body("<p>There was some problem!</p>");
+	        }
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("<p>Error during authentication: " + e.getMessage() + "</p>");
+	    }
     }
 
     
