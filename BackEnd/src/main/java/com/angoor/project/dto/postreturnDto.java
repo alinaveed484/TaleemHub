@@ -30,7 +30,7 @@ public class postreturnDto {
 
 //        String content, LocalDateTime created_at, String Author
         for(Comment comment : postcomments) {
-            comments.add(new CommentReturnDto(comment.getContent(), comment.getCreated_at(), comment.getPerson().getFirstName()));
+            comments.add(new CommentReturnDto(comment.getContent(), comment.getCreated_at(), comment.getPerson().getFirstName(), comment.getVoteCount(), comment.getComment_id()));
         }
 
     }

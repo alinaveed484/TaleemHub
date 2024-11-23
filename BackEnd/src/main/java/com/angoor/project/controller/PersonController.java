@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/persons")
@@ -25,6 +27,19 @@ public class PersonController {
     PersonController(PersonService personService, PersonRepo personRepo) {
         this.personService = personService;
         this.personRepo = personRepo;
+    }
+
+    @GetMapping("/{uid}/points")
+    public ResponseEntity<Map<String, Integer>> getUserPoints(@PathVariable String uid) {
+        Optional<Person> person = personRepo.findByUid(uid);
+
+        if (person.isPresent()) {
+            Map<String, Integer> response = new HashMap<>();
+            response.put("points", person.get().getPoints());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     // Endpoint to redeem points

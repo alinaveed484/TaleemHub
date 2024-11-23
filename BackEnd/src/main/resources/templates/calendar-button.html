@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/scheduleStyle.css">
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
+    <script src="./../scripts/config.js"></script>
+    <title>Authenticate Calendar</title>
+</head>
+<body>
+    <h1>Google Calendar Authentication</h1>
+    <button id="authenticate-btn" style="display: none;">Authenticate G-Calendar</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user) {
+                    const uid = user.uid;
+                    try {
+                        // Send UID to the backend
+                        const response = await fetch(`/auth/checkCalendarStatus?firebaseUid=${encodeURIComponent(uid)}`);
+                        const data = await response.json();
+                        
+                        // Display button if `showButton` is true
+                        if (data.showButton) {
+                            document.getElementById('authenticate-btn').style.display = 'block';
+                        }
+                    } catch (error) {
+                        console.error('Error checking calendar status:', error);
+                        alert('Failed to verify calendar status. Please try again.');
+                    }
+                } else {
+                    alert('User not authenticated!');
+                }
+            });
+        });
+
+        // Redirect logic on button click
+        document.getElementById('authenticate-btn').addEventListener('click', () => {
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user) {
+                    const uid = user.uid;
+                    const authUrl = `/auth/googleCalendar?firebaseUid=${encodeURIComponent(uid)}`;
+                    window.location.href = authUrl;
+                } else {
+                    alert('Please authenticate first!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

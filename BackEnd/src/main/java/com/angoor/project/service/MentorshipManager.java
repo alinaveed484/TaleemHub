@@ -336,6 +336,11 @@ public class MentorshipManager {
 	    return result;
 	}
 
+
+	public Person findByFirebaseUid(String firebaseUid) {
+		return personRepo.findByUid(firebaseUid).orElseThrow(null);
+	}
+
 	@Transactional
 	public Map<String, Object> rejectStudent(String teacherUID, Integer studentID) {
 		Map<String, Object> response = new HashMap<>();
