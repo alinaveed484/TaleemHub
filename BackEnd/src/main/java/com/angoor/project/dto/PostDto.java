@@ -1,10 +1,22 @@
 package com.angoor.project.dto;
 
 
+import java.time.LocalDateTime;
+
 public class PostDto {
     private String title;
     private String content;
-    private Integer personId;  // Use personId instead of the full Person object
+    private String uid;  // Use personId instead of the full Person object
+    private LocalDateTime created_at;
+
+    public PostDto(){}
+
+    public PostDto(String title, String content, String uid) {
+        this.title = title;
+        this.content = content;
+        this.uid = uid;
+        this.created_at = LocalDateTime.now();
+    }
 
     // Getters and Setters
     public String getTitle() {
@@ -22,12 +34,16 @@ public class PostDto {
     public void setContent(String content) {
         this.content = content;
     }
-
-    public Integer getPersonId() {
-        return personId;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
-
-    public void setPersonId(Integer personId) {
-        this.personId = personId;
+    public String getUid() {
+        return uid;
+    }
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
+    public LocalDateTime getCreated_at() {
+        return created_at;
     }
 }

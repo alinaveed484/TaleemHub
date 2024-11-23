@@ -2,7 +2,7 @@ package com.angoor.project.dto;
 
 public class CommentDto {
     private String content;
-    private Integer personId;  // Use personId instead of the full Person object
+    private String uid;  // Use personId instead of the full Person object
 
     // Getters and Setters
     public String getContent() {
@@ -13,11 +13,11 @@ public class CommentDto {
         this.content = content;
     }
 
-    public Integer getPersonId() {
-        return personId;
+    public String getUid() {
+        return uid;
     }
 
-    public void setPersonId(Integer personId) {
-        this.personId = personId;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

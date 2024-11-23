@@ -9,9 +9,11 @@ import com.angoor.project.repository.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class Forum {
@@ -40,7 +42,7 @@ public class Forum {
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
-        post.setCreated_at(LocalDateTime.now());
+        post.setCreated_at(LocalDate.now());
         post.setPerson(person);
         return postRepo.save(post);
     }
