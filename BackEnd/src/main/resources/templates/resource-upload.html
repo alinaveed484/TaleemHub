@@ -1,13 +1,19 @@
 <!DOCTYPE html>
+
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Upload Resource</title>
     <link rel="stylesheet" href="../css/resourcesUploadStyle.css">
+	<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics-compat.js"></script>
+	<script src="./../scripts/config.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
 </head>
 <body>
     <h1>Upload a Resource</h1>
     <div class="form-container">
-        <form action="/resource/upload" method="post" enctype="multipart/form-data">
+        <form action="/resource/upload" method="post" enctype="multipart/form-data" id="myForm">
             <!-- Title -->
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
@@ -37,14 +43,65 @@
             <input type="file" id="file" name="file" required>
             <br><br>
 
-            <!-- Uploader ID -->
+            <!-- Uploader ID 
             <label for="uploader_id">Uploader ID:</label>
             <input type="number" id="uploader_id" name="uploader_id" required>
-            <br><br>
+            <br><br> -->
 
             <!-- Submit -->
             <button type="submit">Upload</button>
         </form>
     </div>
+	
+		<script>
+			document.getElementById('myForm').addEventListener('submit', function(event) {
+		    // Prevent the form's default submission behavior
+		    event.preventDefault();
+	
+		    // Get the current user from Firebase Authentication
+		    firebase.auth().onAuthStateChanged(function(user) {
+		        if (user) {
+		            console.log("User logged in:", user);
+		            const uid = user.uid; // Get the user's UID
+	
+		            // Collect the form data
+		            const form = document.getElementById('myForm');
+		            const formData = new FormData(form);
+	
+		            // Append the UID to the form data
+		            formData.append("uploader_id", uid);
+	
+		            // Send the form data to the backend
+		            sendFormDataToBackend(formData);
+		        } else {
+		            console.log("User not logged in.");
+		            alert("You need to be logged in to upload a resource.");
+		        }
+		    });
+		});
+		async function sendFormDataToBackend(formData) {
+		    try {
+		        const response = await fetch('/resource/upload', {
+		            method: 'POST',
+		            body: formData, // Send the FormData object
+		        });
+	
+		        if (response.ok) {
+		            const data = await response.text(); // Adjust as necessary based on backend response
+		            console.log('Upload successful:', data);
+		            alert("Resource uploaded successfully!");
+		            window.location.href = "/resources/view"; // Redirect after successful upload
+		        } else {
+		            console.error('Error:', response.statusText);
+		            alert("Failed to upload the resource. Please try again.");
+		        }
+		    } catch (error) {
+		        console.error('Error:', error);
+		        alert("An error occurred. Please try again.");
+		    }
+		}
+	</script>
+
+
 </body>
 </html>

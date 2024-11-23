@@ -115,7 +115,7 @@ public class TaleemHub {
             @RequestParam("file") MultipartFile file,           // The file parameter
             @RequestParam("title") String title,                // Other resource details
             @RequestParam("category") resource_category category,
-            @RequestParam("uploader_id") Integer uploaderId,
+            @RequestParam("uploader_id") String uploaderId,
             @RequestParam("subject") resource_subject subject,
             @RequestParam("description") String description) {
 

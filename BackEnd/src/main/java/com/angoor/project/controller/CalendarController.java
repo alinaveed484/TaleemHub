@@ -3,7 +3,9 @@ package com.angoor.project.controller;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,18 +14,24 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import com.angoor.project.dto.StudentDto;
+import com.angoor.project.model.Person;
+import com.angoor.project.model.Teacher;
 import com.angoor.project.service.CalendarService;
+import com.angoor.project.service.MentorshipManager;
 
 
 
 
 
-@RestController
+@Controller
 public class CalendarController {
     @Value("${google.client.id}")
     private String clientId;
@@ -37,10 +45,13 @@ public class CalendarController {
     private Integer personID;
     
     private final CalendarService calendarService;
+   
+    private final MentorshipManager mentorshipService;
     
     @Autowired
-    public CalendarController(CalendarService calendarService) {
+    public CalendarController(CalendarService calendarService, MentorshipManager mentorshipService) {
     	this.calendarService = calendarService;
+		this.mentorshipService = mentorshipService;
     }
     
     @GetMapping("/auth/googleCalender")
@@ -92,5 +103,41 @@ public class CalendarController {
         else
         	return ResponseEntity.ok("There was some problem!");
     }
+    
+    @PostMapping("/schedule/data")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getScheduleData(@RequestBody Map<String, String> payload) {
+        String uid = payload.get("uid");
+        Teacher teacher = calendarService.getTeacherByUid(uid);
+        Set <StudentDto> students = mentorshipService.getStudentDTOs(teacher);
+        Map<String, Object> response = new HashMap<>();
+        response.put("students", students);
+        response.put("teacherId", teacher.getId());
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/schedule/createEvent")
+    @ResponseBody
+    public ResponseEntity<String> createSchedule(
+            @RequestParam Integer teacherId,
+            @RequestParam Integer studentId,
+            @RequestParam String startTime,
+            @RequestParam String endTime) {
+
+        // Example: Call the calendarService to create the schedule
+        boolean result = calendarService.createSchedule(teacherId, studentId, startTime, endTime);
+
+        if (result) {
+            return ResponseEntity.ok("Event created successfully!");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating event.");
+    }
+    
+    
+    @GetMapping("/schedule")
+    public String getScheduleDataHTML() {
+    	return "schedule-event";
+    }
+    
     
 }

@@ -41,8 +41,8 @@ public class PersonController {
             Person person;
 
             // Common fields
-            String firstName = (String) payload.get("firstName");
-            String lastName = (String) payload.get("lastName");
+            String firstName = (String) payload.get("firstname");
+            String lastName = (String) payload.get("lastname");
             String email = (String) payload.get("email");
             String phone = (String) payload.get("phone");
             String uid = (String) payload.get("uid");

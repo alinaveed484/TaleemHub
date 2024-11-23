@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/scheduleStyle.css">
+	<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
+	<script src="./../scripts/config.js"></script>
+    <title>Schedule Management</title>
+</head>
+<body>
+	<h1>Schedule Management</h1>
+
+	<!-- Placeholder for Student Cards -->
+	<div id="student-list" class="student-list"></div>
+
+	<!-- Calendar -->
+	<div id="calendar" class="calendar" style="display:none;">
+	    <h2>Pick a Date and Time</h2>
+	    
+	    <!-- Start Time -->
+	    <label for="start-time">Start Date & Time:</label>
+	    <input type="datetime-local" id="start-time" required>
+	    <br><br>
+
+	    <!-- End Time -->
+	    <label for="end-time">End Date & Time:</label>
+	    <input type="datetime-local" id="end-time" required>
+	    <br><br>
+
+	    <button id="submit-schedule">Create Schedule</button>
+	</div>
+
+	<script>
+	    document.addEventListener('DOMContentLoaded', function () {
+	        firebase.auth().onAuthStateChanged(async (user) => {
+	            if (user) {
+	                const uid = user.uid;
+	                // Fetch teacher and student data
+	                const response = await fetch('/schedule/data', {
+	                    method: 'POST',
+	                    headers: { 'Content-Type': 'application/json' },
+	                    body: JSON.stringify({ uid: uid })
+	                });
+
+	                const data = await response.json();
+	                populateStudentList(data.students, data.teacherId);
+	            } else {
+	                alert('User not authenticated!');
+	            }
+	        });
+	    });
+
+		function populateStudentList(students, teacherId) {
+		    const studentList = document.getElementById('student-list');
+		    studentList.innerHTML = ''; // Clear any existing content
+		    students.forEach(student => {
+		        const card = document.createElement('div');
+		        card.classList.add('student-card');
+		        card.innerHTML = `
+		            <h3>${student.firstName} ${student.lastName}</h3>
+		            <button data-student-id="${student.id}" onclick="selectStudent(this, ${teacherId})">Select</button>
+		        `;
+		        studentList.appendChild(card);
+		    });
+		}
+
+		function selectStudent(button, teacherId) {
+		    const studentId = button.getAttribute('data-student-id');
+		    const calendar = document.getElementById('calendar');
+		    calendar.dataset.selectedStudent = studentId;
+		    calendar.dataset.teacherId = teacherId;
+		    calendar.style.display = 'block';
+		}
+
+		document.getElementById('submit-schedule').addEventListener('click', async function () {
+		    const calendar = document.getElementById('calendar');
+		    const studentId = calendar.dataset.selectedStudent;
+		    const teacherId = calendar.dataset.teacherId;
+		    const startTime = document.getElementById('start-time').value;
+		    const endTime = document.getElementById('end-time').value;
+
+		    const response = await fetch('/schedule/createEvent', {
+		        method: 'POST',
+		        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		        body: `teacherId=${teacherId}&studentId=${studentId}&startTime=${startTime}&endTime=${endTime}`
+		    });
+
+		    const result = await response.text();
+		    alert(result);
+		});
+    </script>
+</body>
+</html>
