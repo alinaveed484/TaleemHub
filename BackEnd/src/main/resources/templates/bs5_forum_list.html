@@ -169,7 +169,7 @@
         </li>
         <!--        Chat-->
         <li class="menu-item">
-          <a href="tables-basic.html" class="menu-link">
+          <a href="/chatIndex.html" class="menu-link">
             <i class='menu-icon tf-icons bx bx-chat'></i>
             <div data-i18n="Tables">Chat</div>
           </a>
@@ -190,7 +190,7 @@
         </li>
 
         <li class="menu-item">
-          <a href="tables-basic.html" class="menu-link">
+          <a href="#" class="menu-link" id="connectLink">
             <i class='menu-icon tf-icons bx bx-globe'></i>
             <div data-i18n="Tables">Connect</div>
           </a>
@@ -501,6 +501,36 @@
               console.error('Error:', error);
             });
   }
+
+</script>
+<script>
+  document.getElementById("connectLink").addEventListener('click', function (event) {
+    event.preventDefault();
+
+    firebase.auth().onAuthStateChanged(async function (user) {
+      if (user) {
+        console.log("User logged in:", user);
+
+        try {
+          const response = await fetch(`/connect_check?uid=${user.uid}`, {
+            redirect: "follow", // Follow redirection
+          });
+
+          if (response.redirected) {
+            // Navigate to the redirected URL
+            window.location.href = response.url;
+          } else if (!response.ok) {
+            throw new Error("Failed to process request");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      } else {
+        console.log("User not logged in.");
+        alert("You must log in first.");
+      }
+    });
+  });
 
 </script>
 </body>

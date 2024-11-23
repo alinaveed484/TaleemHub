@@ -8,8 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import com.angoor.project.model.Student;
+import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.StudentTeacherRequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,7 @@ import com.angoor.project.service.MentorshipManager;
 
 @Controller
 public class CalendarController {
+    private final PersonRepo personRepo;
     @Value("${google.client.id}")
     private String clientId;
 
@@ -52,9 +56,10 @@ public class CalendarController {
     private final MentorshipManager mentorshipService;
     
     @Autowired
-    public CalendarController(CalendarService calendarService, MentorshipManager mentorshipService) {
+    public CalendarController(CalendarService calendarService, MentorshipManager mentorshipService, PersonRepo personRepo) {
     	this.calendarService = calendarService;
 		this.mentorshipService = mentorshipService;
+        this.personRepo = personRepo;
     }
     
     @GetMapping("/auth/button")
@@ -158,6 +163,16 @@ public class CalendarController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getScheduleData(@RequestBody Map<String, String> payload) {
         String uid = payload.get("uid");
+        Optional<Person> person = personRepo.findByUid(uid);
+
+        if(person.isPresent()){
+            if(person.get() instanceof Student){
+                Map<String, Object> response = new HashMap<>();
+                response.put("Ali", "You not allowed");
+                return ResponseEntity.ok(response);
+            }
+        }
+
         Teacher teacher = calendarService.getTeacherByUid(uid);
         Set <StudentDto> students = mentorshipService.getStudentDTOs(teacher);
         Map<String, Object> response = new HashMap<>();
