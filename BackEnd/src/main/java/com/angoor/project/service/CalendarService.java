@@ -11,6 +11,8 @@ import com.angoor.project.repository.PersonRepo;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.UserCredentials;
 
 import jakarta.persistence.OneToOne;
 import jakarta.transaction.Transactional;
@@ -28,7 +30,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
+import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -103,20 +107,24 @@ public class CalendarService {
 	    }
 	}
 
-	public boolean saveTokens(Integer personID, String accessToken, String refreshToken, LocalDateTime expirationTime) {
+	public boolean saveTokens(String uid, String accessToken, String refreshToken, LocalDateTime expirationTime) {
 	    // Retrieve the person from the database using personID
-	    Person person = personRepository.findById(personID).orElse(null);
+	    Person person = personRepository.findByUid(uid).orElse(null);
 	    
 	    // Check if the person exists
 	    if (person != null) {
 	        // Create a new CalendarToken instance and set its fields
-	        CalendarToken calendarToken = new CalendarToken();
+	        CalendarToken calendarToken = person.getCalendartoken();
+	        if(calendarToken == null) {
+	        	calendarToken = new CalendarToken();
+		        // Associate the calendar token with the person
+		        calendarToken.setPerson(person);
+	        }	        
 	        calendarToken.setAccessToken(accessToken);
 	        calendarToken.setRefreshToken(refreshToken);
 	        calendarToken.setExpireAfter(expirationTime);
 	        
-	        // Associate the calendar token with the person
-	        calendarToken.setPerson(person);
+
 	        person.setCalendartoken(calendarToken);
 	        
 	        // Save the CalendarToken instance using the repository
@@ -127,7 +135,7 @@ public class CalendarService {
 	        return true;
 	    } else {
 	        // Handle case where person is not found, maybe throw an exception or log a message
-	        System.out.println("Person with ID " + personID + " not found.");
+	        System.out.println("Person with ID " + person.getId() + " not found.");
 	        return false;
 	    }
 	}
@@ -192,7 +200,7 @@ public class CalendarService {
 
 	        // Create the event
 	        Event event = new Event()
-	                .setSummary("Meeting")
+	                .setSummary(teacher.getFirstName() + " " + teacher.getLastName() + "Set up a meeting with " + student.getFirstName() + " " + student.getLastName())
 	                .setStart(startEventDateTime)
 	                .setEnd(endEventDateTime);
 
@@ -222,13 +230,12 @@ public class CalendarService {
 	    JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 	    NetHttpTransport httpTransport = new NetHttpTransport();
 
-	    // Check if the access token is expired
+	    // Refresh the access token if expired
 	    if (token.getExpireAfter().isBefore(LocalDateTime.now())) {
-	        // Access token expired, refresh it
 	        refreshAccessToken(token);
 	    }
 
-	    // Create credentials with the current (possibly refreshed) access token
+	    // Create credentials
 	    Credential credential = new Credential.Builder(new Credential.AccessMethod() {
 	        @Override
 	        public void intercept(HttpRequest request, String accessToken) throws IOException {
@@ -237,11 +244,12 @@ public class CalendarService {
 
 	        @Override
 	        public String getAccessTokenFromRequest(HttpRequest request) {
-	            return null; // Not used here
+	            return null; // Not used
 	        }
 	    })
 	        .setTransport(httpTransport)
 	        .setJsonFactory(jsonFactory)
+	        .setClientAuthentication(new ClientParametersAuthentication(clientId, clientSecret))
 	        .setTokenServerEncodedUrl("https://oauth2.googleapis.com/token")
 	        .build();
 
@@ -255,6 +263,32 @@ public class CalendarService {
 	    return new Calendar.Builder(httpTransport, jsonFactory, credential)
 	            .setApplicationName("TaleemHub")
 	            .build();
+	}
+
+
+	public boolean checkRefreshToken(String refreshToken) {
+	    try {
+
+	        // Create UserCredentials with refreshToken
+	        UserCredentials userCredentials = UserCredentials.newBuilder()
+	                .setClientId(clientId)
+	                .setClientSecret(clientSecret)
+	                .setRefreshToken(refreshToken)
+	                .build();
+
+	        // Get a new access token
+	        AccessToken accessToken = userCredentials.refreshAccessToken();
+
+	        // Check if the token is valid and not expired
+	        if (accessToken != null && accessToken.getExpirationTime().after(new Date())) {
+	            return true;
+	        }
+	    } catch (IOException e) {
+	        // Log the exception
+	        System.out.println("Failed to validate refresh token: " + e.getMessage());
+	    }
+
+	    return false; // Return false if any error occurs or token is invalid
 	}
 
 }
