@@ -2,6 +2,7 @@ package com.angoor.project.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer postId;
     private String content;
-    private LocalDateTime created_at;
+    private LocalDate created_at;
     private String title;
 
     public void setTitle(String title) {
@@ -20,12 +21,13 @@ public class Post {
     public void setContent(String content) {
         this.content = content;
     }
-    public void setCreated_at(LocalDateTime created_at) {
+    public void setCreated_at(LocalDate created_at) {
         this.created_at = created_at;
     }
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;  // One Post can have multiple comments
+
 
     @ManyToOne
     @JoinColumn(name = "person_id")
@@ -43,7 +45,7 @@ public class Post {
         return title;
     }
 
-    public LocalDateTime getCreated_at() {
+    public LocalDate getCreated_at() {
         return created_at;
     }
 
