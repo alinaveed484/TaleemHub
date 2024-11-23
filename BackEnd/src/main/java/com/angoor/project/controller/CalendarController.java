@@ -2,6 +2,9 @@ package com.angoor.project.controller;
 
 
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +45,6 @@ public class CalendarController {
     @Value("${google.redirect.uri}")
     private String redirectUri;
     
-    private Integer personID;
     
     private final CalendarService calendarService;
    
@@ -54,25 +56,31 @@ public class CalendarController {
 		this.mentorshipService = mentorshipService;
     }
     
-    @GetMapping("/auth/googleCalender")
-    public ResponseEntity<Void> redirectToGoogle(@RequestParam Integer personID) {
-    	this.personID = personID;
+    @GetMapping("/auth/googleCalendar")
+    public ResponseEntity<Void> redirectToGoogle(@RequestParam String firebaseUid) {
+        String state = URLEncoder.encode(firebaseUid, StandardCharsets.UTF_8);
         String authorizationUri = "https://accounts.google.com/o/oauth2/auth?" +
                                   "client_id=" + clientId +
                                   "&redirect_uri=" + redirectUri +
                                   "&response_type=code" +
                                   "&scope=https://www.googleapis.com/auth/calendar.events" +
-                                  "&access_type=offline";
+                                  "&access_type=offline" +
+                                  "&state=" + state;
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(authorizationUri)).build();
     }
     
     @GetMapping("/auth/callback")
-    public ResponseEntity<String> handleGoogleCallback(@RequestParam("code") String code) {
-        if (code == null || code.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid or missing code");
+    public ResponseEntity<String> handleGoogleCallback(
+            @RequestParam("code") String code, 
+            @RequestParam("state") String state) {
+
+        if (code == null || code.isEmpty() || state == null || state.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid or missing code or state");
         }
 
-        // Exchange the code for tokens
+        String firebaseUid = URLDecoder.decode(state, StandardCharsets.UTF_8);
+
+        // Proceed with token exchange as before
         RestTemplate restTemplate = new RestTemplate();
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", clientId);
@@ -90,19 +98,20 @@ public class CalendarController {
         Map<String, Object> tokens = response.getBody();
         String accessToken = (String) tokens.get("access_token");
         String refreshToken = (String) tokens.get("refresh_token");
-        Integer expiresIn = (Integer) tokens.get("expires_in");  // expires_in is typically an Integer
+        Integer expiresIn = (Integer) tokens.get("expires_in");
 
-        // If you want to calculate the expiration time as LocalDateTime
+        // Calculate expiration time
         LocalDateTime expirationTime = LocalDateTime.now().plusSeconds(expiresIn);
 
-        // Store tokens securely for the user
-        // ... (e.g., save to database)
-        boolean worked = calendarService.saveTokens(personID,accessToken,refreshToken,expirationTime);
-        if(worked)
-        	return ResponseEntity.ok("Done!");
+        // Save tokens using the uid from state
+        boolean worked = calendarService.saveTokens(firebaseUid, accessToken, refreshToken, expirationTime);
+
+        if (worked)
+            return ResponseEntity.ok("Done!");
         else
-        	return ResponseEntity.ok("There was some problem!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was some problem!");
     }
+
     
     @PostMapping("/schedule/data")
     @ResponseBody

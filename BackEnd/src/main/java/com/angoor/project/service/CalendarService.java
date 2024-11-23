@@ -103,9 +103,9 @@ public class CalendarService {
 	    }
 	}
 
-	public boolean saveTokens(Integer personID, String accessToken, String refreshToken, LocalDateTime expirationTime) {
+	public boolean saveTokens(String uid, String accessToken, String refreshToken, LocalDateTime expirationTime) {
 	    // Retrieve the person from the database using personID
-	    Person person = personRepository.findById(personID).orElse(null);
+	    Person person = personRepository.findByUid(uid).orElse(null);
 	    
 	    // Check if the person exists
 	    if (person != null) {
@@ -127,7 +127,7 @@ public class CalendarService {
 	        return true;
 	    } else {
 	        // Handle case where person is not found, maybe throw an exception or log a message
-	        System.out.println("Person with ID " + personID + " not found.");
+	        System.out.println("Person with ID " + person.getId() + " not found.");
 	        return false;
 	    }
 	}
