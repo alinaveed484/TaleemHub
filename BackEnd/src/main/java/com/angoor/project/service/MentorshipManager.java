@@ -357,5 +357,10 @@ public class MentorshipManager {
 	    }
 	    return result;
 	}
+	
+
+	public Person findByFirebaseUid(String firebaseUid) {
+		return personRepo.findByUid(firebaseUid).orElseThrow(null);
+	}
 }
 
