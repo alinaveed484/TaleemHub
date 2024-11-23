@@ -9,6 +9,7 @@
 <!--<body>-->
 <!--<h2>Student Request Management | Teacher Portal</h2>-->
 
+<!--&lt;!&ndash; Student Requests Page &ndash;&gt;-->
 <!--<div id="student-requests-page">-->
 <!--    <h3>View Student Requests</h3>-->
 <!--    <form id="teacherRequestForm">-->
@@ -26,6 +27,7 @@
 <!--    </div>-->
 <!--</div>-->
 
+<!--&lt;!&ndash; Student Details Page &ndash;&gt;-->
 <!--<div id="student-details-page" class="hidden">-->
 <!--    <h3>Student Request Details</h3>-->
 <!--    <div id="studentDetails">-->
@@ -46,6 +48,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
     <title>Student Request Management</title>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics-compat.js"></script>
+    <script src="scripts/config.js"></script>
 </head>
 <body>
 <h2>Student Request Management | Teacher Portal</h2>
@@ -53,12 +59,6 @@
 <!-- Student Requests Page -->
 <div id="student-requests-page">
     <h3>View Student Requests</h3>
-    <form id="teacherRequestForm">
-        <label for="teacherID">Your Teacher ID:</label>
-        <input type="number" id="teacherID" name="teacherID" required>
-        <button type="button" id="showRequestsBtn">Show Requests</button>
-    </form>
-
     <div class="student-requests hidden">
         <h4>Student Requests</h4>
         <ul id="studentRequestsList">

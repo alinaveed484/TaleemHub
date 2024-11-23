@@ -156,11 +156,143 @@
 //    `;
 //}
 
+//
+//'use strict';
+//
+//const teacherRequestForm = document.querySelector('#teacherRequestForm');
+//const showRequestsBtn = document.querySelector('#showRequestsBtn');
+//const studentRequestsPage = document.querySelector('#student-requests-page');
+//const studentRequestsList = document.querySelector('#studentRequestsList');
+//const studentDetailsPage = document.querySelector('#student-details-page');
+//const studentDetailsContainer = document.querySelector('#studentDetails');
+//const acceptRequestBtn = document.querySelector('#acceptRequestBtn');
+//const backToRequestsBtn = document.querySelector('#backToRequestsBtn');
+//const backToTeacherPageBtn = document.querySelector('#backToTeacherPageBtn');
+//
+//let selectedStudentID = null;
+//let teacherID = null;
+//
+//// Fetch and display all student requests for the teacher
+//showRequestsBtn.addEventListener('click', async () => {
+//    const teacherIDInput = document.querySelector('#teacherID').value.trim();
+//    if (!teacherIDInput) {
+//        alert("Please enter your Teacher ID!");
+//        return;
+//    }
+//
+//    teacherID = parseInt(teacherIDInput);
+//
+//    try {
+//        const response = await fetch(`/teacher/accept_student/display_students?teacherId=${teacherID}`);
+//        if (!response.ok) {
+//            throw new Error(`Failed to fetch student requests: ${response.statusText}`);
+//        }
+//
+//        const studentRequests = await response.json();
+//        displayStudentRequests(studentRequests);
+//    } catch (error) {
+//        console.error("Error fetching student requests:", error);
+//        alert("Unable to fetch student requests. Please try again.");
+//    }
+//});
+//
+//// Display list of student requests
+//function displayStudentRequests(requests) {
+//    const students = requests.students; // Access the "students" key
+//    studentRequestsList.innerHTML = ''; // Clear previous list
+//    if (!students || Object.keys(students).length === 0) {
+//        studentRequestsList.innerHTML = '<li>No student requests found.</li>';
+//        return;
+//    }
+//
+//    Object.entries(students).forEach(([studentID, details]) => {
+//        const listItem = document.createElement('li');
+//        listItem.textContent = `${details.firstName} ${details.lastName} - ${details.type}`;
+//        listItem.dataset.studentId = details.id; // Use the "id" field from the details
+//        listItem.addEventListener('click', () => fetchStudentDetails(details.id)); // Fetch details on click
+//        studentRequestsList.appendChild(listItem);
+//    });
+//
+//    studentRequestsPage.querySelector('.student-requests').classList.remove('hidden');
+//    backToTeacherPageBtn.classList.remove('hidden');
+//}
+//
+//// Fetch and display detailed information for a specific student
+//async function fetchStudentDetails(studentID) {
+//    console.log(`Fetching details for student ID: ${studentID}`); // Debugging log
+//    try {
+//        const response = await fetch(`/teacher/accept_student/show_student_request?teacherID=${teacherID}&studentID=${studentID}`);
+//        if (!response.ok) {
+//            throw new Error(`Failed to fetch student details: ${response.statusText}`);
+//        }
+//
+//        const studentResponse = await response.json();
+//        console.log("Student details received from backend:", studentResponse); // Debugging log
+//
+//        const studentDetails = studentResponse.student; // Extract the student object
+//        displayStudentDetails(studentDetails, studentID);
+//    } catch (error) {
+//        console.error("Error fetching student details:", error);
+//        alert("Unable to fetch student details. Please try again.");
+//    }
+//}
+//
+//
+//// Display student details and show accept button
+//function displayStudentDetails(details, studentID) {
+//    console.log("Student details to display:", details); // Debugging log
+//    selectedStudentID = studentID;
+//
+//    // Update the HTML to display the student details
+//    studentDetailsContainer.innerHTML = `
+//        <p><strong>ID:</strong> ${details.id || "N/A"}</p>
+//        <p><strong>Name:</strong> ${details.firstName || "N/A"} ${details.lastName || "N/A"}</p>
+//        <p><strong>Status:</strong> ${details.status ? "Online" : "Offline"}</p>
+//        <p><strong>Type:</strong> ${details.type || "N/A"}</p>
+//    `;
+//
+//    studentRequestsPage.classList.add('hidden');
+//    studentDetailsPage.classList.remove('hidden');
+//}
+//
+//
+//// Accept student request
+//acceptRequestBtn.addEventListener('click', async () => {
+//    if (!teacherID || !selectedStudentID) {
+//        alert("Missing Teacher ID or Student ID to accept the request!");
+//        return;
+//    }
+//
+//    try {
+//        const response = await fetch(`/teacher/accept_student/accept_student?teacherID=${teacherID}&studentID=${selectedStudentID}`);
+//        if (!response.ok) {
+//            throw new Error(`Failed to accept student: ${response.statusText}`);
+//        }
+//
+//        alert("Student request accepted successfully!");
+//        backToRequests();
+//    } catch (error) {
+//        console.error("Error accepting student request:", error);
+//        alert("Unable to accept student request. Please try again.");
+//    }
+//});
+//
+//// Go back to student requests page
+//backToRequestsBtn.addEventListener('click', backToRequests);
+//backToTeacherPageBtn.addEventListener('click', () => {
+//    studentRequestsList.innerHTML = '';
+//    studentRequestsPage.querySelector('.student-requests').classList.add('hidden');
+//    backToTeacherPageBtn.classList.add('hidden');
+//});
+//
+//function backToRequests() {
+//    studentDetailsPage.classList.add('hidden');
+//    studentRequestsPage.classList.remove('hidden');
+//    studentDetailsContainer.innerHTML = ''; // Clear previous details
+//}
 
 'use strict';
 
-const teacherRequestForm = document.querySelector('#teacherRequestForm');
-const showRequestsBtn = document.querySelector('#showRequestsBtn');
 const studentRequestsPage = document.querySelector('#student-requests-page');
 const studentRequestsList = document.querySelector('#studentRequestsList');
 const studentDetailsPage = document.querySelector('#student-details-page');
@@ -170,29 +302,31 @@ const backToRequestsBtn = document.querySelector('#backToRequestsBtn');
 const backToTeacherPageBtn = document.querySelector('#backToTeacherPageBtn');
 
 let selectedStudentID = null;
-let teacherID = null;
+let teacherUID = null;
 
-// Fetch and display all student requests for the teacher
-showRequestsBtn.addEventListener('click', async () => {
-    const teacherIDInput = document.querySelector('#teacherID').value.trim();
-    if (!teacherIDInput) {
-        alert("Please enter your Teacher ID!");
-        return;
-    }
+// Initialize Firebase and retrieve the teacher's UID
+firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+        console.log("Logged in as:", user.uid);
+        teacherUID = user.uid; // Assume teacherID corresponds to Firebase UID
 
-    teacherID = parseInt(teacherIDInput);
+        try {
+            // Fetch and display student requests
+            const response = await fetch(`/teacher/accept_student/display_students?teacherUID=${teacherUID}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch student requests: ${response.statusText}`);
+            }
 
-    try {
-        const response = await fetch(`/teacher/accept_student/display_students?teacherId=${teacherID}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch student requests: ${response.statusText}`);
+            const studentRequests = await response.json();
+            displayStudentRequests(studentRequests);
+        } catch (error) {
+            console.error("Error fetching student requests:", error);
+            alert("Unable to fetch student requests. Please try again.");
         }
-
-        const studentRequests = await response.json();
-        displayStudentRequests(studentRequests);
-    } catch (error) {
-        console.error("Error fetching student requests:", error);
-        alert("Unable to fetch student requests. Please try again.");
+    } else {
+        console.log("No teacher is logged in.");
+        alert("You must be logged in as a teacher to view this page.");
+        // Optionally redirect to login page
     }
 });
 
@@ -219,16 +353,13 @@ function displayStudentRequests(requests) {
 
 // Fetch and display detailed information for a specific student
 async function fetchStudentDetails(studentID) {
-    console.log(`Fetching details for student ID: ${studentID}`); // Debugging log
     try {
-        const response = await fetch(`/teacher/accept_student/show_student_request?teacherID=${teacherID}&studentID=${studentID}`);
+        const response = await fetch(`/teacher/accept_student/show_student_request?teacherUID=${teacherUID}&studentID=${studentID}`);
         if (!response.ok) {
             throw new Error(`Failed to fetch student details: ${response.statusText}`);
         }
 
         const studentResponse = await response.json();
-        console.log("Student details received from backend:", studentResponse); // Debugging log
-
         const studentDetails = studentResponse.student; // Extract the student object
         displayStudentDetails(studentDetails, studentID);
     } catch (error) {
@@ -237,13 +368,10 @@ async function fetchStudentDetails(studentID) {
     }
 }
 
-
 // Display student details and show accept button
 function displayStudentDetails(details, studentID) {
-    console.log("Student details to display:", details); // Debugging log
     selectedStudentID = studentID;
 
-    // Update the HTML to display the student details
     studentDetailsContainer.innerHTML = `
         <p><strong>ID:</strong> ${details.id || "N/A"}</p>
         <p><strong>Name:</strong> ${details.firstName || "N/A"} ${details.lastName || "N/A"}</p>
@@ -255,16 +383,15 @@ function displayStudentDetails(details, studentID) {
     studentDetailsPage.classList.remove('hidden');
 }
 
-
 // Accept student request
 acceptRequestBtn.addEventListener('click', async () => {
-    if (!teacherID || !selectedStudentID) {
+    if (!teacherUID || !selectedStudentID) {
         alert("Missing Teacher ID or Student ID to accept the request!");
         return;
     }
 
     try {
-        const response = await fetch(`/teacher/accept_student/accept_student?teacherID=${teacherID}&studentID=${selectedStudentID}`);
+        const response = await fetch(`/teacher/accept_student/accept_student?teacherUID=${teacherUID}&studentID=${selectedStudentID}`);
         if (!response.ok) {
             throw new Error(`Failed to accept student: ${response.statusText}`);
         }
