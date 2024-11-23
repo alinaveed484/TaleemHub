@@ -1,5 +1,6 @@
 package com.angoor.project.service;
 
+import com.angoor.project.dto.StudentDto;
 import com.angoor.project.dto.TeacherDto;
 import com.angoor.project.model.Person;
 import com.angoor.project.model.PersonDTO;
@@ -17,6 +18,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -333,6 +335,23 @@ public class MentorshipManager {
 			studentRepository.save(student);
 			teacherRepository.save(teacher);
 		}
+	}
+
+	public Set<StudentDto> getStudentDTOs(Teacher teacher) {
+	    Set<Student> students = teacher.getStudents();
+	    Set<StudentDto> result = new HashSet<>();
+	    for (Student s : students) {
+	        StudentDto dto = new StudentDto(
+	        	s.getId(),
+	            s.getFirstName(), 
+	            s.getLastName(), 
+	            s.getProfilePhotoURL(), 
+	            s.getGradeLevel(), 
+	            s.getEnrollmentDate()
+	        );
+	        result.add(dto);
+	    }
+	    return result;
 	}
 }
 
