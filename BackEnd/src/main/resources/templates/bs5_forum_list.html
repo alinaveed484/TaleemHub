@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+  />
+    <!--  This file has been downloaded from bootdey.com @bootdey on twitter -->
+    <!--  All snippets are MIT license http://bootdey.com/license -->
+    <title>bs5 forum list - Bootdey.com</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="@{/Front/assets/img/favicon/favicon.ico}">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet"
+  />
+
+  <!-- Icons. Uncomment required icon fonts -->
+  <link rel="stylesheet" href="/Front/assets/vendor/fonts/boxicons.css" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/Front/assets/vendor/css/core.css" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="/Front/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="/Front/assets/css/demo.css" />
+
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="/Front/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+  <!-- Helpers -->
+  <script src="/Front/assets/vendor/js/helpers.js"></script>
+  <script src="/Front/assets/js/config.js"></script>
+  <script defer>
+    // Fetch and insert the aside content
+    fetch('/Front/html/aside.html')
+            .then(response => response.text())
+            .then(data => {
+              const asideContainer = document.getElementById('aside-container');
+              if (asideContainer) {
+                asideContainer.innerHTML = data;
+
+                // Perform any post-load actions here
+                console.log('Aside content loaded successfully');
+              } else {
+                console.error('aside-container element not found');
+              }
+            })
+            .catch(error => console.error('Error loading aside content:', error));
+
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics-compat.js"></script>
+  <script src="/scripts/config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
+</head>
+<body>
+<link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+
+
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <div id="aside-container"></div>
+
+
+<div class="container">
+      <div class="row">
+        <!-- Main content -->
+        <div class="col-lg-9 mb-3">
+          <div class="row text-left mb-5">
+            <div class="col-lg-6 mb-3 mb-sm-0">
+              <div class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50" style="width: 100%;">
+              <select class="form-control form-control-lg bg-white bg-op-9 text-sm w-lg-50" data-toggle="select" tabindex="-98">
+                <option> Categories </option>
+                <option> Learn </option>
+                <option> Share </option>
+                <option> Build </option>
+              </select>
+              </div>
+            </div>
+            <div class="col-lg-6 text-lg-right">
+              <div class="dropdown bootstrap-select form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50" style="width: 100%;">
+                  <select class="form-control form-control-lg bg-white bg-op-9 ml-auto text-sm w-lg-50" data-toggle="select" tabindex="-98">
+                    <option> Filter by </option>
+                    <option> Votes </option>
+                    <option> Replys </option>
+                    <option> Views </option>
+                  </select>
+              </div>
+            </div>
+          </div>
+          <!-- Iterate through posts -->
+          <div th:each="post : ${posts}" class="card row-hover pos-relative py-3 px-3 mb-3 border-warning border-top-0 border-right-0 border-bottom-0 rounded-0">
+            <div class="row align-items-center">
+              <div class="col-md-8 mb-3 mb-sm-0">
+                <h5>
+                  <a href="#" class="text-primary" th:text="${post.title}">Post Title</a>
+                </h5>
+                <p class="text-sm">
+                  <span class="op-6">Posted</span>
+                  <a class="text-black" href="#" th:text="${post.created_at}">20 minutes ago</a>
+                  <span class="op-6"> by </span>
+                  <a class="text-black" href="#" th:text="${post.personName}">KenyeW</a>
+                </p>
+              </div>
+              <div class="col-md-4 op-7">
+                <div class="row text-center op-7">
+                  <div class="col px-1">
+                    <i class="ion-connection-bars icon-1x"></i>
+                    <span class="d-block text-sm">141 Votes</span>
+                  </div>
+                  <div class="col px-1">
+                    <i class="ion-ios-chatboxes-outline icon-1x"></i>
+                    <span class="d-block text-sm">122 Replies</span>
+                  </div>
+                  <div class="col px-1">
+                    <i class="ion-ios-eye-outline icon-1x"></i>
+                    <span class="d-block text-sm">290 Views</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Post Content -->
+            <div class="card-body" style="display: none;" th:id="'postContent-' + ${post.id}">
+              <p th:text="${post.content}">Post content here...</p>
+            </div>
+
+            <!-- Place to Add Replies -->
+            <div class="mb-3" style="display: none;" th:id="'postReply-' + ${post.id}">
+              <label class="form-label" th:for="'commentTextArea-' + ${post.id}">Comment</label>
+              <div class="input-group input-group-merge">
+                            <span id="basic-icon-default-message2" class="input-group-text"
+                            ><i class="bx bx-comment"></i
+                            ></span>
+                <textarea
+                        th:id="'commentTextArea-' + ${post.id}"
+                        class="form-control"
+                        placeholder="Hi, Do you have a moment to talk Joe?"
+                        aria-label="Hi, Do you have a moment to talk Joe?"
+                        aria-describedby="basic-icon-default-message2"
+                ></textarea>
+                <button type="submit" th:id="'replyButton-' + ${post.id}" th:onclick="'sendComment(' + ${post.id} + ')'" class="btn btn-primary">Send</button>
+              </div>
+            </div>
+
+            <!-- Iterate over Comments -->
+            <div style="display: none;" th:id="'postComment-' + ${post.id}">
+              <div th:each="comment : ${post.comments}">
+                <div class="comment-header">
+                  <span class="comment-author" th:text="${comment.author}">John Doe</span>
+                  <span class="comment-time" th:text="${comment.created_at}">2 minutes ago</span>
+                </div>
+                <p class="card-text" th:text="${comment.content}">
+                  This is some text within a card body. Jelly lemon drops tiramisu chocolate cake cotton candy soufflé oat cake
+                  sweet roll.
+                </p>
+                <br>
+              </div>
+            </div>
+
+            <!-- Button to toggle post content visibility -->
+            <div class="demo-inline-spacing">
+              <button class="btn btn-primary" th:onclick="'toggleContent(' + ${post.id} + ')'" th:id="'buttonContent-' + ${post.id}">Read More</button>
+            </div>
+          </div>
+
+
+        </div>
+        <!-- Sidebar content -->
+        <div class="col-lg-3 mb-4 mb-lg-0 px-lg-0 mt-lg-0">
+          <div style="visibility: hidden; display: none; width: 285px; height: 801px; margin: 0px; float: none; position: static; inset: 85px auto auto;"></div><div data-settings="{&quot;parent&quot;:&quot;#content&quot;,&quot;mind&quot;:&quot;#header&quot;,&quot;top&quot;:10,&quot;breakpoint&quot;:992}" data-toggle="sticky" class="sticky" style="top: 85px;"><div class="sticky-inner">
+            <a class="btn btn-lg btn-block btn-success rounded-0 py-4 mb-3 bg-op-6 roboto-bold" href="/Front/html/postInput.html">Ask Question</a>
+            <div class="bg-white mb-3">
+              <h4 class="px-3 py-4 op-5 m-0">
+                Active Topics
+              </h4>
+              <hr class="m-0">
+              <div class="pos-relative px-3 py-3">
+                <h6 class="text-primary text-sm">
+                  <a href="#" class="text-primary">Why Bootstrap 4 is so awesome? </a>
+                </h6>
+                <p class="mb-0 text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">39 minutes</a> <span class="op-6">ago by</span> <a class="text-black" href="#">AppStrapMaster</a></p>
+              </div>
+              <hr class="m-0">
+              <div class="pos-relative px-3 py-3">
+                <h6 class="text-primary text-sm">
+                  <a href="#" class="text-primary">Custom shortcut or command to launch command in terminal? </a>
+                </h6>
+                <p class="mb-0 text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">58 minutes</a> <span class="op-6">ago by</span> <a class="text-black" href="#">DanielD</a></p>
+              </div>
+              <hr class="m-0">
+              <div class="pos-relative px-3 py-3">
+                <h6 class="text-primary text-sm">
+                  <a href="#" class="text-primary">HELP! My Windows XP machine is down </a>
+                </h6>
+                <p class="mb-0 text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">48 minutes</a> <span class="op-6">ago by</span> <a class="text-black" href="#">DanielD</a></p>
+              </div>
+              <hr class="m-0">
+              <div class="pos-relative px-3 py-3">
+                <h6 class="text-primary text-sm">
+                  <a href="#" class="text-primary">HELP! My Windows XP machine is down </a>
+                </h6>
+                <p class="mb-0 text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">38 minutes</a> <span class="op-6">ago by</span> <a class="text-black" href="#">DanielD</a></p>
+              </div>
+              <hr class="m-0">
+            </div>
+            <div class="bg-white text-sm">
+              <h4 class="px-3 py-4 op-5 m-0 roboto-bold">
+                Stats
+              </h4>
+              <hr class="my-0">
+              <div class="row text-center d-flex flex-row op-7 mx-0">
+                <div class="col-sm-6 flex-ew text-center py-3 border-bottom border-right"> <a class="d-block lead font-weight-bold" href="#">58</a> Topics </div>
+                <div class="col-sm-6 col flex-ew text-center py-3 border-bottom mx-0"> <a class="d-block lead font-weight-bold" href="#">1.856</a> Posts </div>
+              </div>
+              <div class="row d-flex flex-row op-7">
+                <div class="col-sm-6 flex-ew text-center py-3 border-right mx-0"> <a class="d-block lead font-weight-bold" href="#">300</a> Members </div>
+                <div class="col-sm-6 flex-ew text-center py-3 mx-0"> <a class="d-block lead font-weight-bold" href="#">DanielD</a> Newest Member </div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript"></script>
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
+<script src="/Front/assets/vendor/libs/jquery/jquery.js"></script>
+<script src="/Front/assets/vendor/libs/popper/popper.js"></script>
+<script src="/Front/assets/vendor/js/bootstrap.js"></script>
+<script src="/Front/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+<script defer src="/Front/assets/vendor/js/menu.js"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+<script defer src="/Front/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+<!-- Main JS -->
+<script defer src="/Front/assets/js/main.js"></script>
+
+<!-- Page JS -->
+<script defer src="/Front/assets/js/dashboards-analytics.js"></script>
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script>
+  // Function to toggle content visibility
+  function toggleContent(postId) {
+    const content = document.getElementById(`postContent-${postId}`);
+    const button = document.getElementById(`buttonContent-${postId}`);
+    const reply = document.getElementById(`postReply-${postId}`);
+    const postComment = document.getElementById(`postComment-${postId}`);
+
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      reply.style.display = 'block';
+      postComment.style.display = 'block';
+      button.innerText = 'Show Less'; // Change button text when content is visible
+    } else {
+      content.style.display = 'none';
+      reply.style.display = 'none';
+      postComment.style.display = 'none';
+      button.innerText = 'Read More'; // Change button text when content is hidden
+    }
+  }
+</script>
+<script>
+  let currentUser = null;
+
+  // Set up the auth state listener once
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed in
+      console.log("User logged in:", user);
+      currentUser = user;  // Store the user object or just the UID
+    } else {
+      // User is signed out
+      console.log("User not logged in.");
+      currentUser = null;  // Ensure currentUser is null when not logged in
+    }
+  });
+
+  function sendComment(postId) {
+    // Get the content of the textarea
+    const textArea = document.getElementById(`commentTextArea-${postId}`);
+    const comment = textArea.value.trim();
+
+    if (!comment) {
+      alert("Please enter a comment before sending.");
+      return;
+    }
+
+    // Prepare the data to send to the backend
+    const data = {
+      content: comment,
+      uid: currentUser.uid,
+    };
+
+    // Send the comment to the backend
+    fetch(`/api/forum/posts/${postId}/comments`, { // Update the endpoint to match your backend API
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to send comment');
+              }
+              return response.json();
+            })
+            .then(result => {
+              alert("Comment successfully sent!");
+              textArea.value = ''; // Clear the textarea
+              window.location.reload();
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert("An error occurred while sending the comment.");
+            });
+  }
+</script>
+</body>
+</html>

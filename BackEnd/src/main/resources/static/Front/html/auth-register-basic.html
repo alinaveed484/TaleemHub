@@ -216,7 +216,7 @@
                 </div>
                 <div class="mb-3">
                   <label for="html5-tel-input" class="col-md-2 col-form-label">Phone</label>
-                    <input class="form-control" type="tel" value="03xx-xxxxxxx" id="html5-tel-input" />
+                    <input class="form-control" type="tel" placeholder="03xx-xxxxxxx" id="html5-tel-input" />
                 </div>
                 <div id="studentFields" style="display: none;">
                   <div class="mb-3">
@@ -305,6 +305,9 @@
         const firstname = document.getElementById('firstname').value;
         const lastname = document.getElementById('lastname').value;
         const phone = document.getElementById('html5-tel-input').value;
+
+        console.log("Firstname:", firstname);
+        console.log("Lastname:", lastname);
 
         // Wait for Firebase user information
         firebase.auth().onAuthStateChanged(async function (user) {
