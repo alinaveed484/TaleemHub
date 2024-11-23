@@ -68,7 +68,7 @@ function connect(event) {
 
         stompClient.connect({}, onConnected, onError);
     }
-    event.preventDefault();
+    //event.preventDefault();
 }
 
 function onConnected() {
