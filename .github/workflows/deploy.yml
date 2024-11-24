@@ -20,6 +20,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Build Application
+      working-directory: BackEnd
       run: |
         mvn clean package -DskipTests
 
