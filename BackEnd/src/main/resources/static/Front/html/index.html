@@ -349,12 +349,14 @@
                       <div class="col-sm-7">
                         <div class="card-body">
                           <h5 class="card-title text-primary" id="personName2">Welcome John! 🎉</h5>
-                          <p class="mb-4">
-                            You have done <span class="fw-bold">72%</span> more sales today. Check your new badge in
-                            your profile.
+                          <p class="mb-4" id="welcomeMsg">
+                            Welcome to TaleemHub! 🌟 We're thrilled to have you join our vibrant learning community! Whether you're here to gain knowledge, share expertise, or connect with like-minded individuals, TaleemHub is your go-to platform for personalized education.
+                          </p>
+                          <p id="registerMsg" style="display: none">
+                            Please Authenticate your Google Calendar
                           </p>
 
-                          <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>
+                          <a href="javascript:;" id="authenticate-btn" class="btn btn-sm btn-outline-primary" style="display:none">Authenticate</a>
                         </div>
                       </div>
                       <div class="col-sm-5 text-center text-sm-left">
@@ -1040,6 +1042,45 @@
     });
 
   </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async function () {
+        firebase.auth().onAuthStateChanged(async (user) => {
+          if (user) {
+            const uid = user.uid;
+            try {
+              // Send UID to the backend
+              const response = await fetch(`/auth/checkCalendarStatus?firebaseUid=${encodeURIComponent(uid)}`);
+              const data = await response.json();
+
+              // Display button if `showButton` is true
+              if (data.showButton) {
+                document.getElementById('authenticate-btn').style.display = 'block';
+                document.getElementById('welcomeMsg').style.display = 'none';
+                document.getElementById('registerMsg').style.display = 'block';
+              }
+            } catch (error) {
+              console.error('Error checking calendar status:', error);
+              alert('Failed to verify calendar status. Please try again.');
+            }
+          } else {
+            alert('User not authenticated!');
+          }
+        });
+      });
+
+      // Redirect logic on button click
+      document.getElementById('authenticate-btn').addEventListener('click', () => {
+        firebase.auth().onAuthStateChanged(async (user) => {
+          if (user) {
+            const uid = user.uid;
+            const authUrl = `/auth/googleCalendar?firebaseUid=${encodeURIComponent(uid)}`;
+            window.location.href = authUrl;
+          } else {
+            alert('Please authenticate first!');
+          }
+        });
+      });
+    </script>
 
   </body>
 </html>
