@@ -8,6 +8,7 @@ import com.angoor.project.repository.PersonRepo;
 import com.angoor.project.repository.ResourceRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,13 @@ public class ResourceHub {
 	
 	private final ResourceRepo resourceRepository;
 	private final PersonRepo personRepository;
-    private final String storagePath = "/home/ariyan/Desktop/uploads/";
+    private final Path storagePath;
 	@Autowired
-	public ResourceHub(ResourceRepo resourceRepo, PersonRepo personRe) {
+	public ResourceHub(ResourceRepo resourceRepo, PersonRepo personRe,
+					   @Value("${resourcehub.storage-path}") String storagePath) {
 		this.resourceRepository = resourceRepo;
 		this.personRepository = personRe;
+		this.storagePath = Paths.get(storagePath).toAbsolutePath().normalize();
 	}
 	
     
@@ -55,10 +58,10 @@ public class ResourceHub {
     public ResponseEntity<String> uploadResource(MultipartFile file, String title, resource_category category, String uploaderId, resource_subject subject, String description){
     	try {
     	    String fileName = file.getOriginalFilename();
-    	    Path filePath = Paths.get(storagePath, fileName);
+			Path filePath = storagePath.resolve(fileName).normalize(); // Use the class-level storagePath
 
     	    // Ensure the directory exists
-    	    Files.createDirectories(Paths.get(storagePath)); 
+			Files.createDirectories(storagePath); // This is a no-op if the directory already exists
     	    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
     	    Person person = personRepository.findByUid(uploaderId).orElse(null);
