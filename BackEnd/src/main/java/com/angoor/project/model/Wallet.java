@@ -10,7 +10,7 @@ public class Wallet {
     private Integer id;
 
     private double currency = 0; // default currency
-
+    private String cardNumber;
     // Link to the Person owning this wallet
     @OneToOne(mappedBy = "wallet")
     private Person person;
@@ -43,5 +43,11 @@ public class Wallet {
         this.currency = 0.0;
     }
 
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
 }
