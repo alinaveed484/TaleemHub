@@ -188,23 +188,6 @@ function displayMessage(senderId, content) {
     chatArea.appendChild(messageContainer);
     chatArea.scrollTop = chatArea.scrollHeight; // Scroll to the latest message
 }
-//
-//async function fetchAndDisplayUserChat() {
-//    const userChatResponse = await fetch(`/chat/messages/${personDTO.id}/${selectedUserId}`);
-//    const userChat = await userChatResponse.json();
-//
-//    // Merge local messages with fetched messages
-//    const localMessages = chatHistories.get(selectedUserId) || [];
-//    const allMessages = [...userChat, ...localMessages];
-//
-//    chatArea.innerHTML = '';
-//    allMessages.forEach(chat => {
-//        displayMessage(chat.senderId, chat.content);
-//    });
-//
-//    // Scroll to the latest message
-//    chatArea.scrollTop = chatArea.scrollHeight;
-//}
 
 async function fetchAndDisplayUserChat() {
     const userChatResponse = await fetch(`/chat/messages/${personDTO.id}/${selectedUserId}`);

@@ -40,41 +40,6 @@ public class ChatController {
      }
 
 
-//    @MessageMapping("/send_msg")
-//    public void processMessage(
-//            @Payload MessageDTO messageDTO
-//    ) {
-//        // Create a new Message object from MessageDTO
-//        Message message = new Message();
-//        message.setSender(personRepo.findById(messageDTO.getSenderId()).orElse(null)); // Fetch sender from DB
-//        message.setRecipient(personRepo.findById(messageDTO.getRecipientId()).orElse(null)); // Fetch recipient from DB
-//        message.setContent(messageDTO.getContent());
-//        message.setType(MessageType.valueOf(messageDTO.getType().toUpperCase()));
-//        message.setTimeStamp(messageDTO.getTimeStamp());
-//
-//        // Save the new message in the database
-//        Message msg = chatService.saveMessage(message);
-//
-//        // Create and send a chat notification
-//        ChatNotification chatNotification = new ChatNotification();
-//        chatNotification.setId(msg.getMessageId());
-//        chatNotification.setSenderId(msg.getSender().getId());
-//        chatNotification.setRecipientId(msg.getRecipient().getId());
-//        chatNotification.setContent(msg.getContent());
-//
-//        messagingTemplate.convertAndSendToUser(
-//                message.getRecipient().getId().toString() + "/" + message.getSender().getId().toString(), // Use recipient ID
-//                "/queue/messages",
-//                chatNotification
-//        );
-//
-//        messagingTemplate.convertAndSendToUser(
-//                message.getSender().getId().toString() + "/" + message.getRecipient().getId().toString(), // Use recipient ID
-//                "/queue/messages",
-//                chatNotification
-//        );
-//    }
-
     @MessageMapping("/send_msg")
     public void processMessage(@Payload MessageDTO messageDTO) {
         // Log the incoming message
@@ -112,24 +77,6 @@ public class ChatController {
     }
 
 
-
-
-//    @GetMapping("/messages/{senderId}/{recipientId}")
-//    public ResponseEntity<List<MessageDTO>> findChatMessages(
-//            @PathVariable("senderId") Integer senderId,
-//            @PathVariable("recipientId") Integer recipientId) {
-//        // Retrieve the list of Message entities
-//        List<Message> messages = chatService.findMessages(senderId, recipientId);
-//
-//        // Convert the list of Message entities to a list of MessageDTOs
-//        List<MessageDTO> messageDTOs = messages.stream()
-//                .map(this::convertToDTO)
-//                .collect(Collectors.toList());
-//
-//        // Return the list of MessageDTOs in the response
-//        return ResponseEntity.ok(messageDTOs);
-//    }
-
     @GetMapping("/messages/{senderId}/{recipientId}")
     public ResponseEntity<List<MessageDTO>> findChatMessages(
             @PathVariable("senderId") Integer senderId,
@@ -159,23 +106,6 @@ public class ChatController {
                 message.getChat().getChatId()
         );
     }
-
-//     @MessageMapping({"/chat/teacher/answer_student/chat.sendMessage", "/chat/student/question_teacher/chat.sendMessage"})
-//     public void sendMessage(@Payload Message message){
-//
-//          String chatKey = generateChatKey(message.getChat().getTeacher().getId(), message.getChat().getStudent().getId());
-//
-//          chatService.saveMessage(message);
-//
-//          String destination = "/topic/chat/" + chatKey;
-//
-//          messagingTemplate.convertAndSend(destination, message);
-//
-//     }
-//
-//     private String generateChatKey(Integer teacherID, Integer studentID) {
-//          return "t" + teacherID.toString() + "-" + "s" + studentID.toString();
-//     }
 
 
      @GetMapping("/hello2")
