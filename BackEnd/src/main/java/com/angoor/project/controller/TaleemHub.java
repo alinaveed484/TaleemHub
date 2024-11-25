@@ -113,7 +113,7 @@ public class TaleemHub {
     }
 
     @PostMapping("/resource/upload")
-    public String shareResource_shareResources(
+    public ResponseEntity<String> shareResource_shareResources(
             @RequestParam("file") MultipartFile file,           // The file parameter
             @RequestParam("title") String title,                // Other resource details
             @RequestParam("category") resource_category category,
@@ -122,7 +122,8 @@ public class TaleemHub {
             @RequestParam("description") String description) {
 
         resourceService.uploadResource(file, title, category, uploaderId, subject, description);
-        return "redirect:/resources/view"; // Redirect to the /resources/view endpoint
+        return ResponseEntity.ok("Resource uploaded successfully");
+        //return "redirect:/resources/view"; // Redirect to the /resources/view endpoint
     }
 
     // Viewing resources

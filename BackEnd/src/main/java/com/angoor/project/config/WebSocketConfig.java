@@ -49,8 +49,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // .withSockJS() just adds a backup for the browsers in case they don't support spring websockets
         registry.addEndpoint("/student/question_teacher/chat").withSockJS();
         registry.addEndpoint("/teacher/answer_student/chat").withSockJS();
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS(); // Match frontend endpoint
-        registry.addEndpoint("/chat").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS(); // Match frontend endpoint
+        //registry.addEndpoint("/chat").setAllowedOrigins("*").withSockJS();
 
     }
 
