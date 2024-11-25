@@ -289,7 +289,7 @@
                             </div>
                           </div>
                           <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">John Doe</span>
+                            <span class="fw-semibold d-block" id="personName1">John Doe</span>
                             <small class="text-muted">Admin</small>
                           </div>
                         </div>
@@ -348,7 +348,7 @@
                     <div class="d-flex align-items-end row">
                       <div class="col-sm-7">
                         <div class="card-body">
-                          <h5 class="card-title text-primary">Congratulations John! 🎉</h5>
+                          <h5 class="card-title text-primary" id="personName2">Welcome John! 🎉</h5>
                           <p class="mb-4">
                             You have done <span class="fw-bold">72%</span> more sales today. Check your new badge in
                             your profile.
@@ -1019,6 +1019,27 @@
       });
 
     </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+          console.log("User logged in:", user);
+
+          // Fetch points for the user using their UID
+          updateUserName(user.displayName);
+        } else {
+          console.log("User not logged in.");
+          currentUser = null;
+          document.getElementById("user-points").innerText = "0"; // Default points
+        }
+      });
+      function updateUserName(name){
+        document.getElementById('personName1').textContent = name;
+        document.getElementById('personName2').textContent = 'Welcome ' + name;
+      }
+    });
+
+  </script>
 
   </body>
 </html>
