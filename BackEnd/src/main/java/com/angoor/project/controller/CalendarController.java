@@ -34,10 +34,6 @@ import com.angoor.project.model.Teacher;
 import com.angoor.project.service.CalendarService;
 import com.angoor.project.service.MentorshipManager;
 
-
-
-
-
 @Controller
 public class CalendarController {
     private final PersonRepo personRepo;
@@ -68,7 +64,7 @@ public class CalendarController {
     }
     
     @GetMapping("/auth/checkCalendarStatus")
-    public ResponseEntity<Map<String, Boolean>> checkCalendarStatus(@RequestParam String firebaseUid) {
+    public ResponseEntity<Map<String, Boolean>> authingFunction(@RequestParam String firebaseUid) {
         Person person = mentorshipService.findByFirebaseUid(firebaseUid);
         Map<String, Boolean> response = new HashMap<>();
 

@@ -13,18 +13,6 @@ public class Chat {
     @Column(name = "chat_id")
     private Integer chatId;
 
-    public void setStudent(Person student) {
-        this.student = student;
-    }
-
-    public void setTeacher(Person teacher) {
-        this.teacher = teacher;
-    }
-
-    public void setChatId(Integer chatId) {
-        this.chatId = chatId;
-    }
-
     @ManyToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "id", nullable = false)
     private Person teacher;
@@ -63,6 +51,18 @@ public class Chat {
 
     public void setMessages(List<Message> messages) {
         this.messages = messages;
+    }
+
+    public void setStudent(Person student) {
+        this.student = student;
+    }
+
+    public void setTeacher(Person teacher) {
+        this.teacher = teacher;
+    }
+
+    public void setChatId(Integer chatId) {
+        this.chatId = chatId;
     }
 
 
