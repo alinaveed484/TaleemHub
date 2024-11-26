@@ -43,7 +43,6 @@ public class MentorshipManager {
 
 	//create a table for student mentorship request to teacher (selectMentor use case)
 
-
 	public List<TeacherDto> displayTeachers(String subject) {
 		// Fetch teachers from the database using the repository
 		List<Teacher> teachers = teacherRepository.findBySubjectSpecialization(subject);
@@ -62,10 +61,6 @@ public class MentorshipManager {
 
 		return response;
 	}
-
-
-
-
 
 	public Map<String, Object> showTeacherDetails(Integer teacherID) {
 		Map<String, Object> response = new HashMap<>();
@@ -92,7 +87,6 @@ public class MentorshipManager {
 
 		return response;
 	}
-
 
 	@Transactional
 	public Map<String, Object> sendMentorRequest(Integer teacherID, String studentUID) {
@@ -169,8 +163,6 @@ public class MentorshipManager {
 
 	}
 
-
-
 	public Set<PersonDTO> getConnectedUsersDTO(Integer personID, String person_type) {
 		// Get connected users (students for a teacher, teachers for a student)
 		Set<PersonDTO> connectedUsers = displayConnectedUsers(personID, person_type);
@@ -226,8 +218,6 @@ public class MentorshipManager {
 
 		return Collections.emptySet(); // Return empty set if person type is unrecognized or person not found
 	}
-
-
 
 	@Transactional
 	public Map<String, Object> displayStudents(String teacherUID) {
@@ -335,7 +325,6 @@ public class MentorshipManager {
 	    }
 	    return result;
 	}
-
 
 	public Person findByFirebaseUid(String firebaseUid) {
 		return personRepo.findByUid(firebaseUid).orElseThrow(null);

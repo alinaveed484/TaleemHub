@@ -26,17 +26,12 @@ public class ChatController {
 
      private final SimpMessagingTemplate messagingTemplate;
      private final ChatHub chatService;
-     private final ChatRepo chatRepo;
-     private final MessageRepo messageRepo;
-     private final PersonRepo personRepo;
+
 
      @Autowired
-     public ChatController(SimpMessagingTemplate messagingTemplate, ChatHub chatService, MessageRepo messageRepo, ChatRepo chatRepo, PersonRepo personRepo) {
+     public ChatController(SimpMessagingTemplate messagingTemplate, ChatHub chatService) {
           this.messagingTemplate = messagingTemplate;
           this.chatService = chatService;
-          this.chatRepo = chatRepo;
-          this.messageRepo = messageRepo;
-          this.personRepo = personRepo;
      }
 
 
