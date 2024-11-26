@@ -35,8 +35,7 @@ public class ResourceHub {
 		this.personRepository = personRe;
 		this.storagePath = Paths.get(storagePath).toAbsolutePath().normalize();
 	}
-	
-    
+
     public Map<String, Object> getResourceCategories(){
     	Map<String, Object> response = new HashMap<>();
     	response.put("1","Text");
@@ -86,6 +85,4 @@ public class ResourceHub {
     public Resource getResourceById(Integer resourceId) {
         return resourceRepository.findById(resourceId).orElse(null);
     }
-
-    
 }

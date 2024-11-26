@@ -33,25 +33,16 @@ import java.util.*;
 @Controller
 public class TaleemHub {
 	//main controller
-	//private final ChatHub chatService;
 	private final ResourceHub resourceService;
-	private final Forum forumService;
     private final MentorshipManager managementService;
-    private final PostRepo postRepo;
-    private final CommentRepo commentRepo;
     private final PersonRepo personRepo;
-    private final StudentTeacherRequestRepo studentTeacherRequestRepo;
 
 
     @Autowired
-    public TaleemHub(MentorshipManager managementService,ResourceHub resourceService, PostRepo postRepo, CommentRepo commentRepo, Forum forumService, PersonRepo personRepo, StudentTeacherRequestRepo studentTeacherRequestRepo) {
+    public TaleemHub(MentorshipManager managementService, ResourceHub resourceService, PersonRepo personRepo) {
         this.managementService = managementService;
         this.resourceService = resourceService;
-        this.postRepo = postRepo;
-        this.commentRepo = commentRepo;
-        this.forumService = forumService;
         this.personRepo = personRepo;
-        this.studentTeacherRequestRepo = studentTeacherRequestRepo;
     }
 
 	//MentorshipManager managementService = new MentorshipManager();
