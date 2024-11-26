@@ -5,6 +5,7 @@ import com.angoor.project.model.Qualification;
 import com.angoor.project.model.Student;
 import com.angoor.project.model.Teacher;
 import com.angoor.project.repository.PersonRepo;
+import com.angoor.project.service.PersonFactory;
 import com.angoor.project.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,7 @@ public class PersonController {
     public ResponseEntity<?> savePerson(@RequestBody Map<String, Object> payload) {
         try {
             String role = (String) payload.get("role");
-            Person person;
+
 
             // Common fields
             String firstName = (String) payload.get("firstname");
@@ -62,31 +63,7 @@ public class PersonController {
             String phone = (String) payload.get("phone");
             String uid = (String) payload.get("uid");
 
-            if ("Student".equalsIgnoreCase(role)) {
-                // Student-specific fields
-                Integer gradeLevel = (Integer) payload.get("gradeLevel");
-                LocalDate enrollmentDate = LocalDate.parse((String) payload.get("enrollmentDate"));
-
-                Student student = new Student();
-                student.setGradeLevel(gradeLevel);
-                student.setEnrollmentDate(enrollmentDate);
-                person = student;
-            } else if ("Teacher".equalsIgnoreCase(role)) {
-                // Teacher-specific fields
-                Integer yearsExperience = (Integer) payload.get("yearsExperience");
-                LocalDate hireDate = LocalDate.parse((String) payload.get("hireDate"));
-                String subjectSpecialization = (String) payload.get("subjectSpecialization");
-                Qualification qualification = Qualification.valueOf((String) payload.get("qualification"));
-
-                Teacher teacher = new Teacher();
-                teacher.setYearsExperience(yearsExperience);
-                teacher.setHireDate(hireDate);
-                teacher.setSubjectSpecialization(subjectSpecialization);
-                teacher.setQualification(qualification);
-                person = teacher;
-            } else {
-                return ResponseEntity.badRequest().body("Invalid role specified.");
-            }
+            Person person = PersonFactory.createPerson(role, payload);
 
             // Set common fields
             person.setFirstName(firstName);

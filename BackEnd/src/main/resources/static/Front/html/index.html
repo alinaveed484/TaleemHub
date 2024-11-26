@@ -504,12 +504,12 @@
                               <span class="mr-3">****</span>
                               <span class="mr-3">****</span>
                               <span class="mr-3">****</span>
-                              <span class="mr-2" id="last-four-digits">5513</span>
+                              <span class="mr-2" id="last-four-digits">XXXX</span>
                             </div>
                             <div class="d-flex justify-content-between card-details mt-3 mb-3">
                               <div class="d-flex flex-column">
                                 <span class="light">Card Holder</span>
-                                <span>Sam Dingo</span>
+                                <span id="personCardName">--- ---</span>
                               </div>
                               <div class="d-flex flex-row">
                                 <div class="d-flex flex-column mr-3">
@@ -524,7 +524,7 @@
                             </div>
                           </div>
                         </div>
-                        <div style="padding: 15px 15px 15px 15px;">
+                        <div style="padding: 15px 15px 15px 15px;" id="cardInfoSubmit">
                           <label for="defaultFormControlInput" class="form-label">Card Number</label>
                           <input
                                   type="text"
@@ -1237,6 +1237,7 @@
                   method: 'GET',
                   headers: { 'Content-Type': 'application/json' }
                 });
+                document.getElementById('cardInfoSubmit').style.display = 'none';
                 window.location.reload();
               } catch (error) {
                   console.error("Error storing card:", error);
@@ -1286,10 +1287,12 @@
             const data = await response.json();
 
             // Display button if `showButton` is true
-            if (data.card) {
+            if (data.card !== "XXXX") {
               document.getElementById("last-four-digits").textContent = data.card;
+              document.getElementById('cardInfoSubmit').style.display = 'none';
             } else {
               document.getElementById("last-four-digits").textContent = "XXXX";
+              document.getElementById('cardInfoSubmit').style.display = 'block';
             }
           } catch (error) {
             console.error("Error fetching card details:", error);
@@ -1324,6 +1327,20 @@
           }
         });
       });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        firebase.auth().onAuthStateChanged(function (user) {
+          if (user) {
+            console.log("User logged in:", user);
+
+            document.getElementById('personCardName').innerText = user.displayName;
+          } else {
+            console.log("User not logged in.");
+          }
+        });
+      });
+
     </script>
   </body>
 </html>
