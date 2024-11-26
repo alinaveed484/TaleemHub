@@ -285,9 +285,9 @@
               <div th:each="comment : ${post.comments}">
                 <div class="d-flex align-items-start">
                   <!-- Left Column: Badge and Button -->
-                  <div class="d-flex align-items-center me-3">
+                  <div class="d-flex align-items-center me-3" style="display: flex; align-items: center; gap: 8px; margin-right: 12px;">
                     <span class="badge badge-center bg-primary" th:text="${comment.votes}">1</span>
-                    <button type="button" class="btn btn-outline-secondary btn-xs mt-2" th:onclick="'upvoteComment(' + ${comment.id} + ')'">
+                    <button type="button" style="margin-top: 0;" class="btn btn-outline-secondary btn-sm mt-2" th:onclick="'upvoteComment(' + ${comment.id} + ')'">
                       <i class="tf-icons bx bx-rocket"></i>
                     </button>
                   </div>
