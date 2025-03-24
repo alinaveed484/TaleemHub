@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
+//starts the application
 @ComponentScan(basePackages = "com.angoor")
 @EnableJpaRepositories(basePackages = "com.angoor.project.repository")
 @EntityScan(basePackages = "com.angoor.project.model")
