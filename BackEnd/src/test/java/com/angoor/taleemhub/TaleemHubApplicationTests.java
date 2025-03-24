@@ -117,6 +117,7 @@ class TaleemHubApplicationTests {
 
     @Test
     public void testManyToManyRelationshipRequests() {
+        //check if multiple requests can be made to multiple teachers
         // Create a teacher
         Teacher teacher = new Teacher();
         teacher.setFirstName("John");
