@@ -1,6 +1,7 @@
 package com.angoor.taleemhub;
 
 import com.angoor.project.controller.ForumController;
+import com.angoor.project.dto.postreturnDto;
 import com.angoor.project.model.Comment;
 import com.angoor.project.model.Post;
 import com.angoor.project.model.Student;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,45 +53,50 @@ class ForumControllerStandaloneTest {
     }
 
     @Test
-    @DisplayName("GET /api/forum/posts → renders the forum list view with DTOs")
+    @DisplayName("GET /api/forum/posts → renders forum list and populates DTO correctly")
     void getAllPosts_rendersForumList() throws Exception {
-        // prepare a Student (concrete Person)
-        var student = new Student();
+        // prepare a Student
+        Student student = new Student();
         student.setUid("u1");
         student.setFirstName("Alice");
         student.setLastName("Smith");
 
-        // create a Post and inject its private fields
-        var post = new Post();
+        // prepare a Post with reflection for private fields
+        Post post = new Post();
         Field idField = Post.class.getDeclaredField("postId");
         idField.setAccessible(true);
         idField.set(post, 42);
-
         post.setTitle("Hello");
         post.setContent("World");
         post.setCreated_at(LocalDate.of(2025, 4, 1));
         post.setPerson(student);
-
         Field commentsField = Post.class.getDeclaredField("comments");
         commentsField.setAccessible(true);
         commentsField.set(post, List.of());
 
-        // mock service
         when(forumService.getAllPosts()).thenReturn(List.of(post));
 
-        mockMvc.perform(get("/api/forum/posts"))
+        // perform and grab the ModelAndView
+        var mvcResult = mockMvc.perform(get("/api/forum/posts"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("bs5_forum_list"))
-                .andExpect(model().attribute("posts", hasSize(1)))
-                .andExpect(model().attribute("posts",
-                        hasItem(allOf(
-                                hasProperty("postId", is(42)),
-                                hasProperty("title", is("Hello")),
-                                hasProperty("authorName", is("Alice Smith")),
-                                hasProperty("comments", hasSize(0))
-                        ))
-                ));
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<Object> rawPosts = (List<Object>) mvcResult
+                .getModelAndView().getModel().get("posts");
+        assertEquals(1, rawPosts.size(), "Should have exactly one DTO");
+
+        // cast to your DTO type
+        postreturnDto dto = (postreturnDto) rawPosts.get(0);
+
+        // now assert on its getters directly
+        assertEquals(42, dto.getId());
+        assertEquals("Hello", dto.getTitle());
+        assertEquals("Alice Smith", dto.getPersonName());
+        assertTrue(dto.getComments().isEmpty());
     }
+
 
     @Test
     @DisplayName("POST /api/forum/posts → 200 + success JSON")
