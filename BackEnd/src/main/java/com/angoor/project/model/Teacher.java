@@ -1,5 +1,6 @@
 package com.angoor.project.model;
 
+import com.angoor.project.service.*;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -67,3 +68,19 @@ public class Teacher extends Person{
     }
     
 }
+
+
+//@MockBean
+//private CalendarService calendarService;
+//
+//@MockBean
+//private MentorshipManager mentorshipManager;
+//
+//@MockBean
+//private ChatHub chatHub;
+//
+//@MockBean
+//private PaymentService paymentService;
+//
+//@MockBean
+//private ResourceHub resourceHub;
